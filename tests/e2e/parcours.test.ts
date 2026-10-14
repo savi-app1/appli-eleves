@@ -137,7 +137,9 @@ describe("documents et mode strict", () => {
     const fields = await awa.actionFields(`/cours/${documentId}?onglet=summary`, 'name="kind"');
     const res = await awa.postForm(`/cours/${documentId}?onglet=summary`, fields);
     expect(res.status).toBe(303);
-    const page = await awa.get(`/cours/${documentId}?onglet=summary`);
+    if (remote) console.warn(`Redirection après génération : ${res.location}`);
+    // la page vers laquelle l'élève est renvoyé doit montrer la fiche (l'hébergeur peut réécrire la requête)
+    const page = await awa.get(res.location!);
     expect(text(page.body)).toContain("L'essentiel");
   });
 
@@ -156,8 +158,8 @@ describe("quiz, correction, examen, progression", () => {
   it("crée un quiz depuis le document et un quiz par thème", async () => {
     const fields = await awa.actionFields(`/cours/${documentId}?onglet=quiz`, 'name="count"');
     const res = await awa.postForm(`/cours/${documentId}?onglet=quiz`, { ...fields, count: "5" });
-    expect(res.location).toMatch(/^\/quiz\/[0-9a-f-]{36}$/);
-    quizId = res.location!.split("/").pop()!;
+    expect(res.location).toMatch(/^\/quiz\/[0-9a-f-]{36}(\?.*)?$/);
+    quizId = new URL(res.location!, base).pathname.split("/").pop()!;
     expect(text((await awa.get(`/quiz/${quizId}`)).body)).toContain("Question 1");
     const byTopic = await awa.postForm("/quiz", { ...(await awa.actionFields("/quiz", 'name="topic"')), subject: "Mathématiques", topic: "Équations du premier degré", count: "5" });
     expect(byTopic.location).toMatch(/^\/quiz\//);
