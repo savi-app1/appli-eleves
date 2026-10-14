@@ -42,6 +42,14 @@ const presetEnv: Record<string, string> =
         OCR_TIMEOUT_MS: "8000",
         DATABASE_POOL_MAX: "2",
         TRIAL_DAYS: "4",
+        // Diagnostic (noms de variables seulement, jamais de valeurs) exposé par /api/sante hors production.
+        SAVI_BUILD_INFO: JSON.stringify({
+          context: process.env.CONTEXT ?? null,
+          builtAt: new Date().toISOString(),
+          envKeys: Object.keys(process.env)
+            .filter((k) => /DATABASE|NEON|SUPABASE|^NETLIFY_|^DEPLOY_|^SITE_NAME$/.test(k) && !/TOKEN|KEY|SECRET/.test(k))
+            .sort(),
+        }),
       }
     : {};
 

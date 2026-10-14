@@ -16,9 +16,12 @@ type Holder = { db?: Db; ready?: Promise<Db> };
 const holder = globalThis as unknown as { __saviDb?: Holder };
 holder.__saviDb ??= {};
 
-/** URL PostgreSQL : DATABASE_URL, sinon celle provisionnée automatiquement par l'hébergeur (Netlify DB / Neon). */
+/**
+ * URL PostgreSQL : DATABASE_URL, sinon celle injectée par l'hébergeur ou une extension reliée au site
+ * (Netlify DB / Neon : NETLIFY_DATABASE_URL ; extension Supabase : SUPABASE_DATABASE_URL).
+ */
 export function databaseUrl(): string | undefined {
-  return process.env.DATABASE_URL || process.env.NETLIFY_DATABASE_URL || undefined;
+  return process.env.DATABASE_URL || process.env.NETLIFY_DATABASE_URL || process.env.SUPABASE_DATABASE_URL || undefined;
 }
 
 /**
