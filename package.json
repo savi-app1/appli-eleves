@@ -22,6 +22,8 @@
     "@ai-sdk/openai": "^4.0.93",
     "@ai-sdk/react": "^4.0.143",
     "@electric-sql/pglite": "^0.5.10",
+    "@netlify/blobs": "^11.1.4",
+    "@netlify/neon": "^0.1.2",
     "ai": "^7.0.140",
     "clsx": "^2.1.1",
     "drizzle-orm": "^0.45.4",

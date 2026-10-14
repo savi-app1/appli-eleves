@@ -1,0 +1,52 @@
+name: Vérification du déploiement
+
+# Après chaque déploiement Netlify (préproduction ou production), rejoue le parcours de bout en bout
+# contre le site réellement en ligne : santé, sécurité, inscription, tuteur, documents, quiz, correction, paiement bac à sable.
+on:
+  push:
+    branches: [main, "arena/**"]
+  workflow_dispatch:
+    inputs:
+      url:
+        description: "URL du site à vérifier (laisser vide pour attendre le déploiement du commit)"
+        required: false
+        default: ""
+
+concurrency:
+  group: verification-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verifier:
+    name: Parcours réel sur le site déployé
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    permissions:
+      contents: read
+      statuses: read
+      deployments: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - name: Attendre l'URL déployée
+        id: url
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ -n "${{ inputs.url }}" ]; then URL="${{ inputs.url }}"; else URL=$(node scripts/wait-deploy.mjs "${{ github.sha }}" 25); fi
+          echo "url=$URL" >> "$GITHUB_OUTPUT"
+          echo "Site : $URL"
+      - name: Santé du service
+        run: |
+          curl -sS -m 60 "${{ steps.url.outputs.url }}/api/sante" | tee sante.json; echo
+          node -e "const s=require('./sante.json'); if(!s.ok){console.error('Service non sain');process.exit(1)}"
+          curl -sS -o /dev/null -m 60 -w "connexion : %{http_code} en %{time_total}s\n" "${{ steps.url.outputs.url }}/connexion"
+      - name: Parcours de bout en bout (distant)
+        env:
+          E2E_BASE_URL: ${{ steps.url.outputs.url }}
+          E2E_REMOTE: "1"
+        run: npm run test:e2e

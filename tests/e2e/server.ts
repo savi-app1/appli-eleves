@@ -34,6 +34,11 @@ async function waitFor(url: string, timeoutMs: number) {
 
 export default async function setup() {
   const root = process.cwd();
+  // Mode distant : E2E_BASE_URL déjà défini → on teste un déploiement existant (préproduction, Netlify…) sans rien lancer.
+  if (process.env.E2E_BASE_URL) {
+    await waitFor(`${process.env.E2E_BASE_URL.replace(/\/$/, "")}/connexion`, 90_000);
+    return async () => {};
+  }
   if (!existsSync(path.join(root, ".next", "BUILD_ID"))) {
     throw new Error("Aucune version construite : lancer `npm run build` avant `npm run test:e2e`.");
   }

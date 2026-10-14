@@ -26,7 +26,7 @@ async function ocrTesseract(buffer: Buffer): Promise<ExtractedText> {
   const { createWorker } = await import("tesseract.js");
   // Garde-fou : un worker qui ne démarre pas (module absent, mémoire) ne doit jamais bloquer la requête.
   const timeout = new Promise<never>((_, reject) => setTimeout(() => reject(new Error("ocr_timeout")), OCR_TIMEOUT_MS).unref?.());
-  const worker = await Promise.race([createWorker("fra", 1, { langPath: TESSDATA_DIR, cachePath: TESSDATA_DIR, gzip: false }), timeout]);
+  const worker = await Promise.race([createWorker("fra", 1, { langPath: TESSDATA_DIR, cacheMethod: "none", gzip: false }), timeout]);
   try {
     const { data } = await Promise.race([worker.recognize(buffer), timeout]);
     const text = data.text.replace(/[ \t]+\n/g, "\n").trim();

@@ -27,7 +27,7 @@ export function proxy(request: NextRequest) {
 
   // Politique de sécurité du contenu avec nonce par requête. Appliquée en production (vérifiée : tous les scripts
   // rendus par Next.js portent le nonce) ; en mode « rapport seul » en développement (outils de Next.js).
-  const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
+  const nonce = btoa(crypto.randomUUID());
   const isDev = process.env.NODE_ENV !== "production";
   const allowEmbed = process.env.SAVI_ALLOW_EMBED === "1";
   const csp = [

@@ -17,9 +17,38 @@ type Holder = { db?: Db; ready?: Promise<Db> };
 const holder = globalThis as unknown as { __saviDb?: Holder };
 holder.__saviDb ??= {};
 
+/** URL PostgreSQL : DATABASE_URL, sinon celle provisionnée automatiquement par l'hébergeur (Netlify DB / Neon). */
+export function databaseUrl(): string | undefined {
+  return process.env.DATABASE_URL || process.env.NETLIFY_DATABASE_URL || undefined;
+}
+
+/**
+ * Applique les migrations au démarrage (une fois par processus) sous verrou consultatif PostgreSQL :
+ * plusieurs instances serverless peuvent démarrer en même temps sans se marcher dessus.
+ * Désactivable avec DB_AUTO_MIGRATE=0 (quand les migrations sont lancées par le pipeline de déploiement).
+ */
+async function migratePostgres(url: string) {
+  const { Client } = await import("pg");
+  const { drizzle } = await import("drizzle-orm/node-postgres");
+  const { migrate } = await import("drizzle-orm/node-postgres/migrator");
+  const client = new Client({ connectionString: url });
+  await client.connect();
+  try {
+    await client.query("SELECT pg_advisory_lock(727_272)");
+    await migrate(drizzle(client), { migrationsFolder: "./drizzle" });
+  } finally {
+    try {
+      await client.query("SELECT pg_advisory_unlock(727_272)");
+    } finally {
+      await client.end();
+    }
+  }
+}
+
 async function create(): Promise<Db> {
-  const url = process.env.DATABASE_URL;
+  const url = databaseUrl();
   if (url) {
+    if (process.env.DB_AUTO_MIGRATE !== "0") await migratePostgres(process.env.NETLIFY_DATABASE_URL_UNPOOLED || url);
     const { Pool } = await import("pg");
     const pool = new Pool({ connectionString: url, max: Number(process.env.DATABASE_POOL_MAX ?? 5) });
     return drizzlePg(pool, { schema }) as unknown as Db;
@@ -38,7 +67,12 @@ async function create(): Promise<Db> {
 export function getDb(): Promise<Db> {
   const h = holder.__saviDb!;
   if (h.db) return Promise.resolve(h.db);
-  h.ready ??= create().then((db) => (h.db = db));
+  h.ready ??= create()
+    .then((db) => (h.db = db))
+    .catch((err) => {
+      h.ready = undefined;
+      throw err;
+    });
   return h.ready;
 }
 

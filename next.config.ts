@@ -25,8 +25,39 @@ const securityHeaders = [
   },
 ];
 
+/**
+ * Préréglage de déploiement « netlify-preview » (environnement de validation hébergé sur Netlify, sans secret) :
+ * les variables non sensibles sont figées dans le bundle au moment du build, car Netlify ne transmet pas
+ * les variables de netlify.toml aux fonctions à l'exécution.
+ */
+const deployPreset = process.env.SAVI_DEPLOY_PRESET;
+const presetEnv: Record<string, string> =
+  deployPreset === "netlify-preview"
+    ? {
+        APP_ENV: "preview",
+        AI_PROVIDER: process.env.AI_PROVIDER ?? "mock",
+        PAYMENT_PROVIDER: "sandbox",
+        STORAGE_PROVIDER: "netlify-blobs",
+        ADMIN_IDENTIFIERS: process.env.ADMIN_IDENTIFIERS ?? "admin.savi@exemple.com,admin.e2e@exemple.com",
+        OCR_TIMEOUT_MS: "8000",
+        DATABASE_POOL_MAX: "2",
+        TRIAL_DAYS: "4",
+      }
+    : {};
+
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  env: presetEnv,
+  // Fichiers à embarquer dans les fonctions serverless (OCR local) ; PGlite exclu hors développement.
+  outputFileTracingIncludes: deployPreset
+    ? {
+        // migrations SQL exécutées au premier démarrage (src/db/client.ts → migratePostgres)
+        "/**": ["./drizzle/**/*"],
+        "/api/corrections": ["./.data/tessdata/**/*", "./node_modules/tesseract.js/**/*", "./node_modules/tesseract.js-core/**/*"],
+        "/api/documents": ["./.data/tessdata/**/*", "./node_modules/tesseract.js/**/*", "./node_modules/tesseract.js-core/**/*"],
+      }
+    : undefined,
+  outputFileTracingExcludes: deployPreset ? { "*": ["./node_modules/@electric-sql/pglite/**/*"] } : undefined,
   // Image Docker (VPS) : sortie autonome. Non activé par défaut pour garder `next start` et Vercel inchangés.
   output: process.env.NEXT_OUTPUT === "standalone" ? "standalone" : undefined,
   poweredByHeader: false,
