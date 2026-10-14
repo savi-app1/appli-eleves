@@ -282,3 +282,24 @@ describe("cloisonnement entre comptes", () => {
     expect((await issa.get("/accueil")).status).toBe(307);
   });
 });
+
+describe("suppression de compte", () => {
+  it("supprime les comptes de test : confirmation exigée, données effacées, connexion impossible ensuite", async () => {
+    // sans le mot « SUPPRIMER », rien n'est supprimé
+    const refused = await awa.postForm("/profil?delete=confirm", { ...(await awa.actionFields("/profil?delete=confirm", 'name="confirm"')), confirm: "non" });
+    expect(refused.location).toBe("/profil?delete=confirm");
+    expect((await awa.get("/accueil")).status).toBe(200);
+
+    const done = await awa.postForm("/profil?delete=confirm", { ...(await awa.actionFields("/profil?delete=confirm", 'name="confirm"')), confirm: "SUPPRIMER" });
+    expect(done.location).toMatch(/^\/bienvenue\?deleted=1/);
+    awa.logoutCookies();
+    const relogin = await awa.postForm("/connexion", { ...(await awa.actionFields("/connexion")), identifier: E2E_ADMIN, password });
+    expect(relogin.status).toBe(200); // reste sur la page avec une erreur : le compte n'existe plus
+
+    // second élève : reconnexion puis suppression (aucun compte de test ne subsiste sur le site)
+    const login = await issa.postForm("/connexion", { ...(await issa.actionFields("/connexion")), identifier: `issa${stamp}@exemple.com`, password });
+    expect(login.status).toBe(303);
+    const gone = await issa.postForm("/profil?delete=confirm", { ...(await issa.actionFields("/profil?delete=confirm", 'name="confirm"')), confirm: "SUPPRIMER" });
+    expect(gone.location).toMatch(/^\/bienvenue\?deleted=1/);
+  });
+});

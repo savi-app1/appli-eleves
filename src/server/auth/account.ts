@@ -1,8 +1,9 @@
 import { eq } from "drizzle-orm";
 import type { Db } from "@/db/client";
-import { subjects, subscriptions, users, type User } from "@/db/schema";
+import { documents, subjects, submissions, subscriptions, users, type User } from "@/db/schema";
 import { trialEndDate } from "@/server/billing/entitlement";
 import { audit } from "@/server/security/audit";
+import { getStorage } from "@/server/storage";
 import { parseIdentifier, type Identifier } from "./identifier";
 import { hashPassword, passwordPolicyError, verifyPassword } from "./password";
 import { createSession, revokeAllUserSessions } from "./session";
@@ -119,8 +120,17 @@ export async function changePassword(db: Db, userId: string, current: string, ne
 }
 
 /** Suppression définitive : les tables liées sont en ON DELETE CASCADE ; l'audit garde une trace anonymisée. */
+/**
+ * Suppression définitive : fichiers importés effacés du stockage (au mieux : un fichier déjà absent n'empêche rien),
+ * puis toutes les données de l'élève par cascade (conversations, documents, quiz, paiements, sessions…).
+ */
 export async function deleteAccount(db: Db, userId: string) {
   await audit(db, "account.delete", null, { userHash: userId.slice(0, 8) });
+  const docs = await db.select({ key: documents.storageKey }).from(documents).where(eq(documents.userId, userId));
+  const subs = await db.select({ key: submissions.storageKey }).from(submissions).where(eq(submissions.userId, userId));
+  const storage = getStorage();
+  const keys = [...docs, ...subs].map((r) => r.key).filter((k): k is string => Boolean(k));
+  await Promise.all(keys.map((k) => storage.delete(k).catch(() => undefined)));
   await db.delete(users).where(eq(users.id, userId));
 }
 
