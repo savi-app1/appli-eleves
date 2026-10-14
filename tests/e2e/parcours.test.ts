@@ -47,7 +47,10 @@ describe("compte et sécurité de base", () => {
     // tous les scripts rendus portent le nonce (sinon la CSP casserait la page)
     const scripts = res.body.match(/<script[^>]*>/g) ?? [];
     expect(scripts.length).toBeGreaterThan(0);
-    expect(scripts.every((s) => s.includes("nonce="))).toBe(true);
+    const nonceMatch = /'nonce-([^']+)'/.exec(res.headers.get("content-security-policy") ?? "");
+    expect(nonceMatch, "nonce absent de la CSP").not.toBeNull();
+    // listées en clair pour le rapport si une balise échappe au nonce
+    expect(scripts.filter((s) => !s.includes(`nonce="${nonceMatch![1]}"`)).map((s) => s.slice(0, 200))).toEqual([]);
     expect((await anon.get("/sw.js")).status).toBe(200);
     expect((await anon.get("/hors-ligne")).status).toBe(200);
   });
