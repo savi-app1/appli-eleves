@@ -25,6 +25,7 @@ jobs:
       contents: read
       statuses: read
       deployments: read
+      checks: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -41,12 +42,33 @@ jobs:
           echo "url=$URL" >> "$GITHUB_OUTPUT"
           echo "Site : $URL"
       - name: Santé du service
+        env:
+          URL: ${{ steps.url.outputs.url }}
         run: |
-          curl -sS -m 60 "${{ steps.url.outputs.url }}/api/sante" | tee sante.json; echo
+          set -o pipefail
+          {
+            echo "# Vérification de $URL"
+            echo; echo "## Santé"; echo '```'
+            curl -sS -m 60 -D - "$URL/api/sante" -o sante.json -w "→ %{http_code} en %{time_total}s\n" | tr -d '\r' | grep -viE "^(set-cookie|x-nf-|server-timing)" || true
+            head -c 2000 sante.json; echo
+            echo '```'
+            echo; echo "## Page de connexion"; echo '```'
+            curl -sS -m 60 -D - "$URL/connexion" -o connexion.html -w "→ %{http_code} en %{time_total}s\n" | tr -d '\r' | grep -viE "^(set-cookie|x-nf-|server-timing)" || true
+            head -c 1500 connexion.html | sed 's/<[^>]*>/ /g' | tr -s ' \n' | head -c 800; echo
+            echo '```'
+          } | tee rapport.md
           node -e "const s=require('./sante.json'); if(!s.ok){console.error('Service non sain');process.exit(1)}"
-          curl -sS -o /dev/null -m 60 -w "connexion : %{http_code} en %{time_total}s\n" "${{ steps.url.outputs.url }}/connexion"
       - name: Parcours de bout en bout (distant)
         env:
           E2E_BASE_URL: ${{ steps.url.outputs.url }}
           E2E_REMOTE: "1"
-        run: npm run test:e2e
+        run: |
+          set -o pipefail
+          { echo; echo "## Parcours de bout en bout"; echo '```'; } >> rapport.md
+          npm run test:e2e 2>&1 | sed 's/\x1b\[[0-9;]*m//g' | tee -a rapport.md
+          echo '```' >> rapport.md
+      - name: Publier le rapport
+        if: always()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/publish-report.mjs rapport.md "Rapport de vérification du déploiement" "${{ job.status == 'success' && 'success' || 'failure' }}"

@@ -2,13 +2,16 @@
 
 ## 1. Où en est l'URL de préproduction
 
-- **Aujourd'hui** : l'application tourne dans l'environnement de prévisualisation de la session de travail (lien
-  fourni dans la conversation), avec l'IA simulée (`AI_PROVIDER=mock`), le paiement en bac à sable
-  (`PAYMENT_PROVIDER=sandbox`, `APP_ENV=preview`) et une base PostgreSQL embarquée. Ce lien sert aux tests de
-  validation ; il n'est pas destiné à durer ni à être partagé largement.
-- **URL stable** : elle nécessite un hébergeur et donc des comptes au nom de l'équipe SAVI (pour garder le contrôle et
-  la facturation). Deux options sont prêtes dans le dépôt ; les deux se déploient en moins d'une heure une fois les
-  comptes créés.
+- **En ligne** : le site Netlify relié au dépôt GitHub (`cosmic-otter-c3fd6b`) construit automatiquement chaque
+  commit — voir la section 8 (option C). La branche `main` donne l'URL de préproduction stable
+  `https://cosmic-otter-c3fd6b.netlify.app` (renommable dans Netlify → *Site configuration* → *Change site name*),
+  chaque pull request a son *Deploy Preview*. Environnement clairement étiqueté « préproduction » : IA simulée
+  (`AI_PROVIDER=mock`), paiement en bac à sable (`PAYMENT_PROVIDER=sandbox`, `APP_ENV=preview`).
+- **Passage en production réelle** : il suffit d'ajouter dans Netlify (*Site configuration* → *Environment variables*)
+  les clés qui ne doivent jamais être dans le dépôt : `ANTHROPIC_API_KEY` + `AI_PROVIDER=anthropic`,
+  `PAYMENT_PROVIDER=webhook` + `PAYMENT_WEBHOOK_SECRET` + `PAYMENT_LINK`, `APP_ENV=production`, puis de relancer
+  un déploiement. Les variables définies dans l'interface Netlify priment sur les valeurs par défaut du préréglage.
+- Les options A (Vercel + Neon + R2) et B (VPS Docker) restent disponibles si l'équipe préfère un autre hébergeur.
 
 ## 2. Option A — Vercel + Neon + Cloudflare R2 (recommandée pour démarrer)
 
@@ -85,8 +88,43 @@ fichiers : extraire l'archive dans le volume `uploads`. Tester la restauration u
 
 ## 7. Ce qu'il faut encore décider ou fournir
 
-1. Hébergeur (A ou B) et création des comptes au nom de l'équipe SAVI ; nom de domaine.
+1. Reprendre la main sur le site Netlify et sa base (section 8.3) ; nom de domaine.
 2. Clé du fournisseur d'IA (Anthropic recommandé) et budget mensuel.
 3. Prestataire de paiement et accès à son environnement de test ; tarifs définitifs.
 4. Fournisseur d'e-mails/SMS (vérification de compte, mot de passe oublié) — Brevo, Resend, Orange SMS API…
 5. Textes juridiques définitifs (mentions `[à compléter]` dans `/mentions-legales`, `/confidentialite`, `/conditions`).
+
+## 8. Option C — Netlify (site relié au dépôt, déployée)
+
+### 8.1 Ce qui est en place
+
+| Élément | Choix | Pourquoi |
+|---|---|---|
+| Hébergement | Site Netlify relié au dépôt GitHub par l'application Netlify (déjà installée sur le dépôt) | Seul canal de déploiement utilisable sans identifiant à transmettre ; HTTPS, CDN et aperçus par pull request inclus |
+| Construction | `netlify.toml` : `npm run ocr:setup && npm run build`, Node 22, plugin `@netlify/plugin-nextjs` | Télécharge les modèles OCR puis construit Next.js ; le plugin transforme l'application en fonctions serverless |
+| Base de données | **Netlify DB** (PostgreSQL Neon) provisionnée automatiquement grâce à la dépendance `@netlify/neon` ; variable `NETLIFY_DATABASE_URL` injectée | Aucune clé à copier ; `src/db/client.ts` l'utilise si `DATABASE_URL` est absent et **exécute les migrations au premier démarrage** (verrou `pg_advisory_lock`, désactivable avec `DB_AUTO_MIGRATE=0`) |
+| Fichiers | **Netlify Blobs**, magasin privé `savi-fichiers` (`STORAGE_PROVIDER=netlify-blobs`) | Disque des fonctions en lecture seule ; les documents importés doivent survivre aux redéploiements |
+| Réglages | Préréglage `SAVI_DEPLOY_PRESET=netlify-preview` dans `next.config.ts` : `APP_ENV=preview`, IA simulée, paiement bac à sable, OCR limité à 8 s, pool de 2 connexions, administrateurs `admin.savi@exemple.com` | Netlify ne transmet pas les variables de `netlify.toml` aux fonctions à l'exécution : les valeurs **non secrètes** sont donc figées à la construction. Tout secret se met dans l'interface Netlify |
+| Vérification | Flux GitHub Actions « Vérification du déploiement » (`.github/workflows/verification-deploiement.yml`) : attend la fin du déploiement, appelle `GET /api/sante` puis rejoue les 18 scénarios de bout en bout contre le site réel | Preuve automatique que le site en ligne fonctionne (inscription, tuteur, documents, quiz, correction, paiement bac à sable, sécurité) |
+
+Point de santé : `GET /api/sante` → `{"ok":true,"env":"preview","db":"ok","storage":"netlify-blobs","ai":"mock","payment":"sandbox"}`
+(503 si la base est injoignable).
+
+### 8.2 Limites de l'offre gratuite Netlify (à connaître)
+
+- **10 s par requête de fonction** : la lecture OCR locale (Tesseract) d'une photo peut dépasser ce délai ; l'application
+  échoue alors proprement et l'élève peut saisir le texte. Avec une clé IA réelle, l'OCR passe par la vision du modèle
+  (plus rapide et plus fiable). Les réponses du tuteur en flux ne sont pas concernées (streaming).
+- 300 minutes de construction/mois, 100 Go de bande passante : suffisant pour un pilote ; au-delà, offre Pro (19 $/mois).
+- Netlify DB : 0,5 Go de stockage et 190 heures de calcul/mois sur l'offre gratuite Neon ; voir 8.3 pour la pérennité.
+
+### 8.3 Actions à faire par l'équipe SAVI (une seule fois)
+
+1. **Réclamer la base de données sous 7 jours** : Netlify → site → *Extensions* → *Neon* → *Claim database*. Une base
+   non réclamée est **supprimée automatiquement après 7 jours** (avec les comptes de test créés dedans). Une fois
+   réclamée, elle est rattachée à un compte Neon de l'équipe (offre gratuite) et conservée.
+2. Renommer le site et, le moment venu, relier le nom de domaine (*Domain management*).
+3. Ajouter les secrets (IA, paiement) dans *Environment variables* quand ils seront disponibles — jamais dans le dépôt.
+4. Activer les sauvegardes : Neon conserve 24 h d'historique (restauration à un instant donné) sur l'offre gratuite ;
+   pour un export quotidien, utiliser `pg_dump` avec `NETLIFY_DATABASE_URL_UNPOOLED` (section 4). Les fichiers des élèves
+   sont dans Netlify Blobs (durables, répliqués), à exporter avec `netlify blobs:list/get` si besoin.
