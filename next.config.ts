@@ -53,6 +53,7 @@ const presetEnv: Record<string, string> =
         // Diagnostic (noms de variables seulement, jamais de valeurs) exposé par /api/sante hors production.
         SAVI_BUILD_INFO: JSON.stringify({
           context: process.env.CONTEXT ?? null,
+          commit: process.env.COMMIT_REF ?? null,
           builtAt: new Date().toISOString(),
           envKeys: Object.keys(process.env)
             .filter((k) => /DATABASE|NEON|SUPABASE|^NETLIFY_|^DEPLOY_|^SITE_NAME$|^ANTHROPIC_|^OPENAI_|^GEMINI_/.test(k))

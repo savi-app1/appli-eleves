@@ -16,6 +16,10 @@ concurrency:
   group: verification-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  # URL de production du site Netlify relié au dépôt (aucun statut GitHub n'est posé pour les déploiements de production)
+  SITE_URL: https://cosmic-otter-c3fd6b.netlify.app
+
 jobs:
   verifier:
     name: Parcours réel sur le site déployé
@@ -38,7 +42,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          if [ -n "${{ inputs.url }}" ]; then URL="${{ inputs.url }}"; else URL=$(node scripts/wait-deploy.mjs "${{ github.sha }}" 25); fi
+          if [ -n "${{ inputs.url }}" ]; then URL="${{ inputs.url }}";
+          elif [ "${{ github.ref_name }}" = "main" ]; then URL=$(node scripts/wait-deploy.mjs "${{ github.sha }}" 25 "$SITE_URL");
+          else URL=$(node scripts/wait-deploy.mjs "${{ github.sha }}" 25); fi
           echo "url=$URL" >> "$GITHUB_OUTPUT"
           echo "Site : $URL"
       - name: Santé du service
