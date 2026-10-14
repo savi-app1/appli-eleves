@@ -3,6 +3,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getLocale } from "next-intl/server";
 import { headers } from "next/headers";
 import { THEME_INIT_SCRIPT } from "@/components/shell/theme";
+import { ServiceWorkerRegistration } from "@/components/shell/service-worker";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -39,6 +40,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       </head>
       <body className="min-h-full">
         <NextIntlClientProvider>{children}</NextIntlClientProvider>
+        <ServiceWorkerRegistration />
       </body>
     </html>
   );

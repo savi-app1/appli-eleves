@@ -10,6 +10,7 @@
     "typecheck": "tsc --noEmit",
     "icons": "node scripts/gen-icons.mjs",
     "test": "vitest run",
+    "test:e2e": "vitest run --config vitest.e2e.config.ts",
     "test:watch": "vitest",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "tsx src/db/migrate.ts",

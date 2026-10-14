@@ -10,6 +10,7 @@ import { Card } from "@/components/ui/card";
 import { Field, Input, Select, Toggle } from "@/components/ui/form";
 import { EmptyState } from "@/components/ui/page";
 import { cn } from "@/lib/utils";
+import { compressImage, setInputFile } from "@/lib/compress-image";
 
 export interface CourseDoc {
   id: string;
@@ -137,7 +138,18 @@ export function CoursesScreen({ docs, subjects, error, openImport }: { docs: Cou
           <form action="/api/documents" method="post" encType="multipart/form-data" className="space-y-3" onSubmit={() => setImporting(true)}>
             <div className="flex items-center gap-2 text-[15px] font-bold text-ink"><Upload className="size-4 text-green" /> {t("importTitle")}</div>
             <Field label={t("importFile")} htmlFor="file">
-              <input id="file" name="file" type="file" required accept="application/pdf,image/jpeg,image/png,image/webp" className="block w-full text-sm text-ink file:mr-3 file:rounded-full file:border-0 file:bg-green-soft file:px-3 file:py-1.5 file:text-sm file:font-semibold file:text-green-ink" />
+              <input
+                id="file"
+                name="file"
+                type="file"
+                required
+                accept="application/pdf,image/jpeg,image/png,image/webp"
+                onChange={(e) => {
+                  const input = e.currentTarget;
+                  const f = input.files?.[0];
+                  if (f) void compressImage(f).then((c) => { if (c !== f) setInputFile(input, c); });
+                }}
+                className="block w-full text-sm text-ink file:mr-3 file:rounded-full file:border-0 file:bg-green-soft file:px-3 file:py-1.5 file:text-sm file:font-semibold file:text-green-ink" />
             </Field>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
               <Field label={`${t("titleLabel")} (${tc("optional")})`} htmlFor="title"><Input id="title" name="title" maxLength={160} /></Field>

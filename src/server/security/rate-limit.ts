@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { sql } from "drizzle-orm";
 import type { Db } from "@/db/client";
 import { rateLimits } from "@/db/schema";
@@ -11,6 +12,8 @@ export interface RateLimitRule {
 
 export const RULES = {
   login: { limit: 10, windowS: 15 * 60 } satisfies RateLimitRule,
+  /** par identifiant, toutes adresses confondues (force brute distribuée) */
+  loginIdentifier: { limit: 30, windowS: 60 * 60 } satisfies RateLimitRule,
   register: { limit: 5, windowS: 60 * 60 } satisfies RateLimitRule,
   api: { limit: 120, windowS: 60 } satisfies RateLimitRule,
 };
@@ -47,4 +50,9 @@ export function ipKey(ip: string | null | undefined) {
   let h = 0;
   for (const c of ip) h = (h * 31 + c.charCodeAt(0)) >>> 0;
   return h.toString(36);
+}
+
+/** Hachage court (SHA-256 tronqué) d'une valeur sensible (identifiant) pour servir de clé de limitation. */
+export function hashKey(value: string) {
+  return createHash("sha256").update(value.toLowerCase().trim()).digest("base64url").slice(0, 16);
 }

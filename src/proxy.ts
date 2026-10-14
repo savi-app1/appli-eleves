@@ -5,7 +5,7 @@ import { NextResponse, type NextRequest } from "next/server";
  * La vérification réelle de la session (en base) est faite par les pages/actions via `getCurrentUser()`.
  */
 const SESSION_COOKIE = "savi_session";
-const PUBLIC_PATHS = new Set(["/", "/bienvenue", "/connexion", "/inscription", "/manifest.webmanifest", "/mentions-legales", "/confidentialite", "/conditions"]);
+const PUBLIC_PATHS = new Set(["/", "/bienvenue", "/connexion", "/inscription", "/manifest.webmanifest", "/sw.js", "/hors-ligne", "/mentions-legales", "/confidentialite", "/conditions"]);
 const AUTH_ONLY_PATHS = new Set(["/connexion", "/inscription", "/bienvenue"]);
 
 export function proxy(request: NextRequest) {
@@ -25,26 +25,33 @@ export function proxy(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // Politique de sécurité du contenu avec nonce (mode « rapport seul » jusqu'à vérification en navigateur à l'étape 6).
+  // Politique de sécurité du contenu avec nonce par requête. Appliquée en production (vérifiée : tous les scripts
+  // rendus par Next.js portent le nonce) ; en mode « rapport seul » en développement (outils de Next.js).
   const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
   const isDev = process.env.NODE_ENV !== "production";
+  const allowEmbed = process.env.SAVI_ALLOW_EMBED === "1";
   const csp = [
     "default-src 'self'",
     `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${isDev ? " 'unsafe-eval'" : ""}`,
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: blob:",
     "font-src 'self'",
-    "connect-src 'self'",
-    "frame-ancestors 'self'",
+    `connect-src 'self'${isDev ? " ws: wss:" : ""}`,
+    "worker-src 'self'",
+    "manifest-src 'self'",
+    allowEmbed ? "frame-ancestors *" : "frame-ancestors 'self'",
     "form-action 'self'",
     "base-uri 'self'",
     "object-src 'none'",
+    ...(isDev || allowEmbed ? [] : ["upgrade-insecure-requests"]),
   ].join("; ");
 
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set("x-nonce", nonce);
   const response = NextResponse.next({ request: { headers: requestHeaders } });
-  response.headers.set("Content-Security-Policy-Report-Only", csp);
+  response.headers.set(isDev ? "Content-Security-Policy-Report-Only" : "Content-Security-Policy", csp);
+  // Les environnements autres que la production ne doivent pas être indexés.
+  if ((process.env.APP_ENV ?? (isDev ? "development" : "production")) !== "production") response.headers.set("X-Robots-Tag", "noindex, nofollow");
   return response;
 }
 

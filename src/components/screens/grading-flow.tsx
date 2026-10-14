@@ -6,6 +6,7 @@ import { Camera, FileUp, ImageIcon, ScanText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Field, Input, Select, Textarea, Toggle } from "@/components/ui/form";
+import { compressImage, setInputFile } from "@/lib/compress-image";
 
 /** Étape 1 : envoi du devoir (photo/PDF et/ou texte saisi). Formulaire classique vers /api/corrections. */
 export function GradingUpload({ subjects, demo }: { subjects: string[]; demo: boolean }) {
@@ -17,17 +18,19 @@ export function GradingUpload({ subjects, demo }: { subjects: string[]; demo: bo
   const [loading, setLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  function setFile(f: File | null, source: HTMLInputElement | null) {
+  function applyFile(f: File | null, source: HTMLInputElement | null) {
     if (previewRef.current) URL.revokeObjectURL(previewRef.current);
     const url = f && f.type.startsWith("image/") ? URL.createObjectURL(f) : null;
     previewRef.current = url;
     setPicked(f ? { file: f, preview: url } : null);
-    // Un seul champ `file` est envoyé : on recopie la sélection de la caméra dans le champ principal.
-    if (f && source && fileInputRef.current && source !== fileInputRef.current) {
-      const dt = new DataTransfer();
-      dt.items.add(f);
-      fileInputRef.current.files = dt.files;
-    }
+    // Un seul champ `file` est envoyé : on recopie la sélection (caméra ou fichier compressé) dans le champ principal.
+    if (f && fileInputRef.current && (source !== fileInputRef.current || f !== source?.files?.[0])) setInputFile(fileInputRef.current, f);
+  }
+  function setFile(f: File | null, source: HTMLInputElement | null) {
+    if (!f || !f.type.startsWith("image/")) return applyFile(f, source);
+    // Photos : compression côté téléphone avant envoi (réseaux lents), aperçu immédiat.
+    applyFile(f, source);
+    void compressImage(f).then((c) => { if (c !== f) applyFile(c, source); });
   }
   useEffect(() => () => { if (previewRef.current) URL.revokeObjectURL(previewRef.current); }, []);
 

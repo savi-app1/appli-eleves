@@ -4,7 +4,7 @@ Plateforme éducative intelligente pour les élèves, étudiants et candidats au
 et concours d'Afrique de l'Ouest : tuteur IA, correction de devoirs, cours personnels,
 quiz, examens blancs et suivi de progression.
 
-> **État du projet : Étape 4 — MVP pédagogique livré.** Tuteur IA en flux, mode strict sur les documents
+> **État du projet : Étapes 4 à 6 livrées — MVP pédagogique, abonnement/paiement préparé, tests et durcissement.** Tuteur IA en flux, mode strict sur les documents
 > de l'élève (avec sources citées et signalement de ce qui manque), import et lecture de cours (PDF, photos),
 > fiches et exercices générés, quiz corrigés côté serveur, correction de devoirs en deux temps (texte lu →
 > vérification → analyse), examens blancs chronométrés, progression et objectifs, historique épinglable.
@@ -13,7 +13,9 @@ quiz, examens blancs et suivi de progression.
 > Plan : [`docs/01-audit-et-architecture.md`](docs/01-audit-et-architecture.md) ·
 > Écrans : [`docs/02-maquettes.md`](docs/02-maquettes.md) ·
 > Fondations : [`docs/03-fondations.md`](docs/03-fondations.md) ·
-> MVP pédagogique : [`docs/04-mvp-pedagogique.md`](docs/04-mvp-pedagogique.md).
+> MVP pédagogique : [`docs/04-mvp-pedagogique.md`](docs/04-mvp-pedagogique.md) ·
+> Abonnement et paiement : [`docs/05-abonnements-paiement.md`](docs/05-abonnements-paiement.md) ·
+> Tests et sécurité : [`docs/06-tests-et-securite.md`](docs/06-tests-et-securite.md).
 
 ## Pile technique
 
@@ -27,7 +29,10 @@ quiz, examens blancs et suivi de progression.
   pour la démonstration) ; lecture des PDF avec **unpdf**, des photos par le modèle de vision ou **Tesseract.js** en local
 - Recherche plein texte PostgreSQL insensible aux accents (`unaccent`) pour les documents de l'élève et le mode strict
 - **Vitest** (unitaires + intégration sur PostgreSQL en mémoire), CI GitHub Actions
-- À venir (étape 5) : stockage privé S3/R2 en production, abonnement et paiement mobile money.
+- Abonnement : essai de 4 jours côté serveur, prestataire de paiement configurable (lien + confirmation manuelle,
+  webhook signé, bac à sable hors production) — le prestataire mobile money réel reste à brancher
+- Sécurité : CSP avec nonce appliquée en production, contrôle d'origine des API, limitation de débit en base,
+  journal d'audit sans contenu personnel, cloisonnement strict par utilisateur (voir `docs/06-tests-et-securite.md`)
 
 ## Démarrer en local
 
@@ -45,7 +50,8 @@ Autres commandes :
 
 ```bash
 npm run build && npm start      # version de production
-npm test                        # tests Vitest (64 tests, PostgreSQL en mémoire, IA simulée)
+npm test                        # tests Vitest (64 tests unitaires + intégration, PostgreSQL en mémoire, IA simulée)
+npm run build && npm run test:e2e   # parcours de bout en bout (19 tests HTTP contre le serveur construit)
 npm run lint                    # ESLint
 npm run typecheck               # TypeScript
 npm run db:generate             # génère une migration après modification de src/db/schema.ts

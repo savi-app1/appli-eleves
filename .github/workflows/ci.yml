@@ -23,3 +23,9 @@ jobs:
       - run: npm run build
         env:
           NEXT_TELEMETRY_DISABLED: "1"
+      - name: Données OCR (Tesseract fra+eng) pour le parcours de bout en bout
+        run: npm run ocr:setup
+      - name: Parcours de bout en bout (serveur construit, base jetable, IA simulée, paiement bac à sable)
+        run: npm run test:e2e
+        env:
+          NEXT_TELEMETRY_DISABLED: "1"

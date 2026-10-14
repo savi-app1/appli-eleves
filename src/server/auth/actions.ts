@@ -6,7 +6,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { getDb } from "@/db/client";
 import { LOCALE_COOKIE, THEME_COOKIE, isLocale } from "@/i18n/config";
-import { hit, ipKey, RULES } from "@/server/security/rate-limit";
+import { hashKey, hit, ipKey, RULES } from "@/server/security/rate-limit";
 import { audit } from "@/server/security/audit";
 import { AuthError, deleteAccount, login, register, updatePreferences, type AuthErrorCode } from "./account";
 import { clientIp, getCurrentUser, sessionCookieOptions } from "./current";
@@ -69,8 +69,11 @@ export async function loginAction(_prev: AuthFormState, formData: FormData): Pro
   if (!parsed.success) return { error: "invalid_credentials", fields };
   const db = await getDb();
   const ip = await clientIp();
-  const rl = await hit(db, `login:${ipKey(ip)}:${parsed.data.identifier.toLowerCase().slice(0, 64)}`, RULES.login);
+  const idKey = hashKey(parsed.data.identifier);
+  const rl = await hit(db, `login:${ipKey(ip)}:${idKey}`, RULES.login);
   if (!rl.allowed) return { error: "rate_limited", fields };
+  const rlId = await hit(db, `login:id:${idKey}`, RULES.loginIdentifier);
+  if (!rlId.allowed) return { error: "rate_limited", fields };
   try {
     const ua = (await headers()).get("user-agent");
     const { user, session } = await login(db, parsed.data.identifier, parsed.data.password, ua);
