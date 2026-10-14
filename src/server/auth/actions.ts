@@ -8,9 +8,9 @@ import { getDb } from "@/db/client";
 import { LOCALE_COOKIE, THEME_COOKIE, isLocale } from "@/i18n/config";
 import { hashKey, hit, ipKey, RULES } from "@/server/security/rate-limit";
 import { audit } from "@/server/security/audit";
-import { AuthError, deleteAccount, login, register, updatePreferences, type AuthErrorCode } from "./account";
+import { AuthError, changePassword, deleteAccount, login, register, updatePreferences, type AuthErrorCode } from "./account";
 import { clientIp, getCurrentUser, sessionCookieOptions } from "./current";
-import { revokeSession, SESSION_COOKIE } from "./session";
+import { createSession, revokeSession, SESSION_COOKIE } from "./session";
 
 export interface AuthFormState {
   error?: AuthErrorCode | "unknown";
@@ -129,6 +129,27 @@ export async function updatePreferencesAction(input: z.input<typeof prefsSchema>
   if (data.theme) store.set(THEME_COOKIE, data.theme, { path: "/", maxAge: 31536000, sameSite: "lax" });
   revalidatePath("/", "layout");
   return { ok: true as const };
+}
+
+export async function changePasswordAction(formData: FormData) {
+  const current = await getCurrentUser();
+  if (!current) redirect("/connexion");
+  const currentPassword = String(formData.get("currentPassword") ?? "");
+  const nextPassword = String(formData.get("newPassword") ?? "");
+  const confirm = String(formData.get("confirmPassword") ?? "");
+  if (nextPassword !== confirm) redirect("/profil?mdp=mismatch");
+  if (nextPassword === currentPassword) redirect("/profil?mdp=password_same");
+  const db = await getDb();
+  try {
+    await changePassword(db, current.user.id, currentPassword, nextPassword);
+  } catch (err) {
+    if (err instanceof AuthError) redirect(`/profil?mdp=${err.code === "invalid_credentials" ? "wrong_password" : err.code}`);
+    throw err;
+  }
+  // nouvelle session pour cet appareil (les autres ont été déconnectés)
+  const session = await createSession(db, current.user.id, (await headers()).get("user-agent"));
+  await setSessionCookie(session.token, session.expiresAt);
+  redirect("/profil?mdp=ok");
 }
 
 export async function deleteAccountAction(formData: FormData) {

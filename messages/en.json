@@ -491,7 +491,8 @@
       "logout": "Sign out",
       "help": "Help & contact",
       "version": "Version",
-      "admin": "Payment administration"
+      "admin": "Payment administration",
+      "password": "Change password"
     },
     "deleteWarning": "Deletion permanently erases your account, documents and conversations.",
     "pinned": "Pinned",
@@ -503,7 +504,23 @@
     "pinnedEmpty": "Pin a conversation to find it here.",
     "deleteConversation": "Delete conversation",
     "messages": "{count, plural, =1 {# message} other {# messages}}",
-    "strictTag": "Strict mode"
+    "strictTag": "Strict mode",
+    "password": {
+      "title": "New password",
+      "current": "Current password",
+      "new": "New password",
+      "confirm": "Confirm the new password",
+      "hint": "At least 8 characters. Your other devices will be signed out.",
+      "submit": "Save",
+      "ok": "Password changed. Your other devices have been signed out.",
+      "errors": {
+        "wrong_password": "The current password is incorrect.",
+        "password_too_short": "The new password must be at least 8 characters.",
+        "password_too_long": "The new password is too long (128 characters max).",
+        "password_same": "The new password must differ from the current one.",
+        "mismatch": "The two entries of the new password do not match."
+      }
+    }
   },
   "settings": {
     "title": "Languages & theme",

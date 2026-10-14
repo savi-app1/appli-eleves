@@ -491,7 +491,8 @@
       "logout": "Se déconnecter",
       "help": "Aide et contact",
       "version": "Version",
-      "admin": "Administration des paiements"
+      "admin": "Administration des paiements",
+      "password": "Changer le mot de passe"
     },
     "deleteWarning": "La suppression efface définitivement ton compte, tes documents et tes discussions.",
     "pinned": "Épinglées",
@@ -503,7 +504,23 @@
     "pinnedEmpty": "Épingle une discussion pour la retrouver ici.",
     "deleteConversation": "Supprimer la discussion",
     "messages": "{count, plural, =1 {# message} other {# messages}}",
-    "strictTag": "Mode strict"
+    "strictTag": "Mode strict",
+    "password": {
+      "title": "Nouveau mot de passe",
+      "current": "Mot de passe actuel",
+      "new": "Nouveau mot de passe",
+      "confirm": "Confirme le nouveau mot de passe",
+      "hint": "8 caractères minimum. Tes autres appareils seront déconnectés.",
+      "submit": "Enregistrer",
+      "ok": "Mot de passe modifié. Tes autres appareils ont été déconnectés.",
+      "errors": {
+        "wrong_password": "Le mot de passe actuel est incorrect.",
+        "password_too_short": "Le nouveau mot de passe doit faire au moins 8 caractères.",
+        "password_too_long": "Le nouveau mot de passe est trop long (128 caractères maximum).",
+        "password_same": "Le nouveau mot de passe doit être différent de l'actuel.",
+        "mismatch": "Les deux saisies du nouveau mot de passe ne correspondent pas."
+      }
+    }
   },
   "settings": {
     "title": "Langues et thème",
