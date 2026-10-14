@@ -1,4 +1,13 @@
 {
-  "sondes": ["https://cosmic-otter-c3fd6b.netlify.app", "https://deploy-preview-2--cosmic-otter-c3fd6b.netlify.app"],
-  "comptes": null
+  "sondes": [
+    "https://cosmic-otter-c3fd6b.netlify.app"
+  ],
+  "comptes": {
+    "url": "https://cosmic-otter-c3fd6b.netlify.app",
+    "identifiants": [
+      "admin.savi@exemple.com:Admin SAVI:Tle",
+      "eleve.test@exemple.com:Awa:3e"
+    ],
+    "cle_publique": "LS0tLS1CRUdJTiBQVUJMSUMgS0VZLS0tLS0KTUlJQm9qQU5CZ2txaGtpRzl3MEJBUUVGQUFPQ0FZOEFNSUlCaWdLQ0FZRUF0L0xXVmZ2aUlTSTFXdnFEaG05YQpLTFk4NHBiM3c1RDFMR2RHNWN0bFVFRmh4QUhyY2ZEcXNuNzhRdEJFVUZYZ3A4YldDcGxQSklaYU13a29JMTNiCkVNUnplTi9LZmF2NWRlTElTVU5EWXpiV3VWVjNsVTN2djE4TVg2SnFueG9PdkdVM283amlqaHlXK1MrMVp5eVcKdEJ0a1p2V3JHRXE1eGV1ZXZpUDVXTDNTaU5iZkZFSWJqZkxxcVdMdVB1WlhzT0JpVEpqSThIcmtlRHJERXorVApGYUE5b2MyTWtYRDZrcGpkVkhXZ1BudW8rMDYwWjV4akd1dU1GZ201aGwwRGhUVFp4S2ZEU2ZLV1FXa0VOL1JoCmJ0amZTdzZtcE1NakVtQ3kwK0QvQnFJR0dFZStMdDlFeC9NalJiZ2lxbUpzcXVOcnVkV1RVNGdvUFVWOTZGeGIKeXJ0OFEzS2JtbDZDYUY0V0dQbEdmRVFUbEJmY0ZVVGlmTm9jQU9OMFY4RkRkamRlQjFwZXRyTk5uRktTMVphdQpGRDdrT3BiR0EzVGJhMEdjekRwZFNzUFdlazZzQU0wRUNWL2RGdjd6aTVrbzhLdVFpUGg2ZTVrNldWQUhHTHNvCk9iUlFNMkpvdlAzWkIvM2Z4OTUrZW1SZFVvUlQ0RzdDZGMvaFpnSE1JbHJ0QWdNQkFBRT0KLS0tLS1FTkQgUFVCTElDIEtFWS0tLS0tCg=="
+  }
 }
