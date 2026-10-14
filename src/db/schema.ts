@@ -95,19 +95,32 @@ export const payments = pgTable(
   "payments",
   {
     id: id(),
-    userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "set null" }),
+    /** Null après suppression du compte : la trace comptable (sans donnée personnelle) est conservée. */
+    userId: uuid("user_id").references(() => users.id, { onDelete: "set null" }),
     provider: text("provider").notNull(),
+    /** Référence SAVI communiquée au prestataire et à l'élève (ex. SAVI-7K3M9PQ2). */
+    reference: text("reference").notNull().unique(),
+    /** Identifiant de transaction chez le prestataire (égal à la référence tant qu'il est inconnu). */
     providerRef: text("provider_ref").notNull(),
     plan: text("plan", { enum: ["monthly", "yearly"] }).notNull(),
     amount: integer("amount").notNull(),
     currency: text("currency").notNull().default("XOF"),
     status: text("status", { enum: ["pending", "confirmed", "failed", "refunded"] }).notNull().default("pending"),
-    /** Charge utile du webhook après vérification de signature (pour audit). */
+    /** Numéro de transaction déclaré par l'élève (paiement par lien, confirmation manuelle). */
+    payerNote: text("payer_note"),
+    declaredAt: timestamp("declared_at", { withTimezone: true }),
+    failureReason: text("failure_reason"),
+    /** Extrait minimal de la notification vérifiée (statut, montant, identifiant) — jamais de donnée personnelle. */
     rawPayload: jsonb("raw_payload"),
+    /** Administrateur ayant confirmé manuellement, le cas échéant. */
+    confirmedBy: uuid("confirmed_by"),
     confirmedAt: timestamp("confirmed_at", { withTimezone: true }),
+    /** Fin de période Premium résultant de ce paiement. */
+    periodEnd: timestamp("period_end", { withTimezone: true }),
     createdAt: createdAt(),
+    updatedAt: updatedAt(),
   },
-  (t) => [uniqueIndex("payments_provider_ref_unique").on(t.provider, t.providerRef), index("payments_user_idx").on(t.userId)],
+  (t) => [uniqueIndex("payments_provider_ref_unique").on(t.provider, t.providerRef), index("payments_user_idx").on(t.userId), index("payments_status_idx").on(t.status)],
 );
 
 /* ------------------------------------------------- Sécurité, quotas, audit */
@@ -348,3 +361,4 @@ export const examAttempts = pgTable(
 export type User = typeof users.$inferSelect;
 export type Session = typeof sessions.$inferSelect;
 export type Subscription = typeof subscriptions.$inferSelect;
+export type Payment = typeof payments.$inferSelect;

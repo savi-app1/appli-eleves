@@ -490,7 +490,8 @@
       "deleteAccount": "Delete my account",
       "logout": "Sign out",
       "help": "Help & contact",
-      "version": "Version"
+      "version": "Version",
+      "admin": "Payment administration"
     },
     "deleteWarning": "Deletion permanently erases your account, documents and conversations.",
     "pinned": "Pinned",
@@ -532,9 +533,11 @@
     "title": "Subscription",
     "trialTitle": "Free trial in progress",
     "trialEnds": "Trial ends: {date}",
-    "trialRemaining": "{days} left.",
+    "trialRemaining": "You have {days} left.",
     "expiredTitle": "Trial ended",
+    "expiredLead": "Your access to AI features is paused.",
     "activeTitle": "Active subscription",
+    "activeUntil": "Premium access until {date}",
     "renews": "Next renewal: {date}",
     "plans": "Choose your plan",
     "monthly": "Monthly",
@@ -542,7 +545,7 @@
     "perMonth": "/ month",
     "perYear": "/ year",
     "yearlySaving": "2 months free",
-    "priceNote": "Prices being confirmed.",
+    "priceNote": "Prices pending confirmation.",
     "includes": "Included in Premium",
     "features": [
       "Unlimited AI tutor (fair use)",
@@ -553,13 +556,91 @@
       "Progress tracking and revision sessions"
     ],
     "pay": "Pay {amount}",
+    "choose": "Choose",
     "payUnavailable": "Payment not configured yet",
-    "payUnavailableHint": "Payment methods (Orange Money, Moov Money, Wave…) will be enabled once the provider is configured. No payment can be simulated.",
+    "payUnavailableHint": "The payment method (Orange Money, Moov Money, Wave…) will be enabled once the provider is configured. No payment can be simulated.",
     "methods": "Planned payment methods: Orange Money, Moov Money, Wave, bank card.",
-    "securityNote": "Premium access is enabled automatically once the provider confirms the payment.",
-    "manage": "Manage my subscription",
+    "securityNote": "Premium access is activated only after reliable confirmation of the payment (signed provider notification or verification by our team). Prices in FCFA, no hidden fees.",
+    "manage": "Manage my account",
     "whatHappens": "After the trial you keep access to your imported courses, history and profile. AI features require a subscription.",
-    "cfa": "{amount} FCFA"
+    "cfa": "{amount} FCFA",
+    "reasonPremium": "This feature requires an active trial or subscription.",
+    "sandboxBadge": "Test environment: no real money",
+    "manualNote": "After you pay, our team verifies the transaction and activates your access (usually within 24 hours).",
+    "history": "My payments",
+    "noHistory": "No payments yet.",
+    "status": {
+      "pending": "Pending",
+      "confirmed": "Confirmed",
+      "failed": "Failed",
+      "refunded": "Refunded"
+    },
+    "reference": "Reference",
+    "errors": {
+      "payments_disabled": "Payment is not available yet. Please try again later.",
+      "rate_limited": "Too many attempts. Try again in an hour.",
+      "invalid": "Invalid request.",
+      "unknown": "Something went wrong. Please try again."
+    },
+    "instructions": {
+      "title": "Pay via link",
+      "lead": "{plan} plan — {amount}",
+      "step1": "Open the payment page with the button below.",
+      "step2": "Pay exactly {amount} and enter the reference {reference} as the payment note (if the form allows it).",
+      "step3": "Come back here, then tap “I have paid” and, if possible, enter the transaction number received by SMS.",
+      "open": "Open payment page",
+      "note": "Transaction number (optional)",
+      "notePlaceholder": "E.g. MP240914.1234.A56789",
+      "declare": "I have paid",
+      "copy": "Reference to keep"
+    },
+    "returnPage": {
+      "title": "Payment verification",
+      "confirmedTitle": "Payment confirmed — thank you!",
+      "confirmedBody": "Your Premium access is active until {date}.",
+      "pendingTitle": "Payment being verified",
+      "pendingBodyAuto": "We are waiting for the provider's confirmation. This page refreshes automatically.",
+      "pendingBodyManual": "Our team is verifying your transaction. Your access will be activated once confirmed (usually within 24 hours). Keep your reference.",
+      "failedTitle": "Payment not completed",
+      "failedBody": "The payment was not confirmed ({reason}). SAVI has not charged you anything. You can try again.",
+      "reasons": {
+        "provider_failed": "declined or cancelled",
+        "amount_mismatch": "amount differs from the expected one",
+        "refunded": "refunded",
+        "admin_rejected": "not found by our team"
+      },
+      "home": "Go to home",
+      "retry": "Try again",
+      "back": "Back to subscription",
+      "notFound": "Payment not found."
+    },
+    "sandbox": {
+      "title": "Test payment",
+      "warning": "This screen only exists in test or preview environments. It simulates the signed notification the real provider will send to SAVI. No money is exchanged.",
+      "amount": "Simulated amount: {amount}",
+      "success": "Simulate a successful payment",
+      "fail": "Simulate a failure"
+    },
+    "admin": {
+      "title": "Payments to verify",
+      "subtitle": "Limited to payments: no conversation or document is accessible here.",
+      "pending": "Pending",
+      "confirmed": "Recently confirmed",
+      "none": "No pending payment.",
+      "declared": "Declared paid on {date}",
+      "noteLabel": "Transaction no. given: {note}",
+      "createdAt": "Created on {date}",
+      "providerRef": "Verified transaction number",
+      "confirm": "Confirm",
+      "reject": "Mark as failed",
+      "result": {
+        "confirmed": "Payment confirmed: Premium access activated.",
+        "already_confirmed": "This payment was already confirmed.",
+        "failed": "Payment marked as failed.",
+        "unknown_reference": "Reference not found.",
+        "pending": "No change."
+      }
+    }
   },
   "paywall": {
     "title": "Premium feature",

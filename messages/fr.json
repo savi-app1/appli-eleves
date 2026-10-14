@@ -490,7 +490,8 @@
       "deleteAccount": "Supprimer mon compte",
       "logout": "Se déconnecter",
       "help": "Aide et contact",
-      "version": "Version"
+      "version": "Version",
+      "admin": "Administration des paiements"
     },
     "deleteWarning": "La suppression efface définitivement ton compte, tes documents et tes discussions.",
     "pinned": "Épinglées",
@@ -534,7 +535,9 @@
     "trialEnds": "Fin de l'essai : {date}",
     "trialRemaining": "Il te reste {days}.",
     "expiredTitle": "Essai terminé",
+    "expiredLead": "Ton accès aux fonctions IA est suspendu.",
     "activeTitle": "Abonnement actif",
+    "activeUntil": "Accès Premium jusqu'au {date}",
     "renews": "Prochaine échéance : {date}",
     "plans": "Choisis ta formule",
     "monthly": "Mensuel",
@@ -553,13 +556,91 @@
       "Suivi de progression et séances de révision"
     ],
     "pay": "Payer {amount}",
+    "choose": "Choisir",
     "payUnavailable": "Paiement non encore configuré",
     "payUnavailableHint": "Le moyen de paiement (Orange Money, Moov Money, Wave…) sera activé après la configuration du prestataire. Aucun paiement ne peut être simulé.",
     "methods": "Moyens de paiement prévus : Orange Money, Moov Money, Wave, carte bancaire.",
-    "securityNote": "L'accès Premium s'active automatiquement après confirmation du paiement par le prestataire.",
-    "manage": "Gérer mon abonnement",
+    "securityNote": "L'accès Premium s'active après confirmation fiable du paiement (notification signée du prestataire ou vérification par notre équipe). Les tarifs sont en FCFA, sans frais cachés.",
+    "manage": "Gérer mon compte",
     "whatHappens": "Après l'essai, tu gardes l'accès à tes cours importés, ton historique et ton profil. Les fonctions IA nécessitent un abonnement.",
-    "cfa": "{amount} FCFA"
+    "cfa": "{amount} FCFA",
+    "reasonPremium": "Cette fonction nécessite un essai en cours ou un abonnement actif.",
+    "sandboxBadge": "Environnement de test : aucun argent réel",
+    "manualNote": "Après ton paiement, notre équipe vérifie la transaction et active ton accès (en général sous 24 h).",
+    "history": "Mes paiements",
+    "noHistory": "Aucun paiement pour l'instant.",
+    "status": {
+      "pending": "En attente",
+      "confirmed": "Confirmé",
+      "failed": "Échoué",
+      "refunded": "Remboursé"
+    },
+    "reference": "Référence",
+    "errors": {
+      "payments_disabled": "Le paiement n'est pas encore disponible. Réessaie plus tard.",
+      "rate_limited": "Trop de tentatives. Réessaie dans une heure.",
+      "invalid": "Demande invalide.",
+      "unknown": "Une erreur est survenue. Réessaie."
+    },
+    "instructions": {
+      "title": "Payer par lien",
+      "lead": "Formule {plan} — {amount}",
+      "step1": "Ouvre la page de paiement avec le bouton ci-dessous.",
+      "step2": "Paie exactement {amount} et indique la référence {reference} dans le motif (si le formulaire le permet).",
+      "step3": "Reviens ici, puis appuie sur « J'ai payé » en indiquant si possible le numéro de transaction reçu par SMS.",
+      "open": "Ouvrir la page de paiement",
+      "note": "Numéro de transaction (facultatif)",
+      "notePlaceholder": "Ex. : MP240914.1234.A56789",
+      "declare": "J'ai payé",
+      "copy": "Référence à conserver"
+    },
+    "returnPage": {
+      "title": "Vérification du paiement",
+      "confirmedTitle": "Paiement confirmé — merci !",
+      "confirmedBody": "Ton accès Premium est actif jusqu'au {date}.",
+      "pendingTitle": "Paiement en cours de vérification",
+      "pendingBodyAuto": "Nous attendons la confirmation du prestataire. Cette page se met à jour automatiquement.",
+      "pendingBodyManual": "Notre équipe vérifie ta transaction. Ton accès sera activé dès confirmation (en général sous 24 h). Conserve ta référence.",
+      "failedTitle": "Paiement non abouti",
+      "failedBody": "Le paiement n'a pas été confirmé ({reason}). Aucun montant ne t'a été facturé par SAVI. Tu peux réessayer.",
+      "reasons": {
+        "provider_failed": "refusé ou annulé",
+        "amount_mismatch": "montant différent de celui attendu",
+        "refunded": "remboursé",
+        "admin_rejected": "non retrouvé par notre équipe"
+      },
+      "home": "Aller à l'accueil",
+      "retry": "Réessayer",
+      "back": "Retour à l'abonnement",
+      "notFound": "Paiement introuvable."
+    },
+    "sandbox": {
+      "title": "Paiement de test",
+      "warning": "Cet écran n'existe qu'en environnement de test ou de prévisualisation. Il simule la notification signée que le vrai prestataire enverra à SAVI. Aucun argent n'est échangé.",
+      "amount": "Montant simulé : {amount}",
+      "success": "Simuler un paiement réussi",
+      "fail": "Simuler un échec"
+    },
+    "admin": {
+      "title": "Paiements à vérifier",
+      "subtitle": "Vue limitée aux paiements : aucune conversation ni document n'est accessible ici.",
+      "pending": "En attente",
+      "confirmed": "Derniers confirmés",
+      "none": "Aucun paiement en attente.",
+      "declared": "Déclaré payé le {date}",
+      "noteLabel": "N° transaction indiqué : {note}",
+      "createdAt": "Créé le {date}",
+      "providerRef": "N° de transaction vérifié",
+      "confirm": "Confirmer",
+      "reject": "Marquer échoué",
+      "result": {
+        "confirmed": "Paiement confirmé : l'accès Premium est activé.",
+        "already_confirmed": "Ce paiement était déjà confirmé.",
+        "failed": "Paiement marqué échoué.",
+        "unknown_reference": "Référence introuvable.",
+        "pending": "Aucun changement."
+      }
+    }
   },
   "paywall": {
     "title": "Fonction Premium",

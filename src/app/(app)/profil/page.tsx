@@ -1,11 +1,12 @@
 import { getFormatter, getTranslations } from "next-intl/server";
-import { Bell, ChevronRight, CreditCard, Download, FileText, History, LifeBuoy, Languages, LogOut, Pencil, Shield, Trash2 } from "lucide-react";
+import { Bell, ChevronRight, CreditCard, Download, FileText, History, LifeBuoy, Languages, LogOut, Pencil, Shield, ShieldCheck, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/form";
 import { ListGroup, ListItem, PageHeader } from "@/components/ui/page";
 import { SectionLabel } from "@/components/ui/card";
 import { requireUser } from "@/server/auth/current";
+import { isAdmin } from "@/server/billing/admin";
 import { deleteAccountAction, logoutAction } from "@/server/auth/actions";
 import { initials } from "@/lib/utils";
 import { EXAM_COUNTRIES } from "@/lib/exam-catalogue";
@@ -94,6 +95,7 @@ export default async function ProfilePage({ searchParams }: { searchParams: Prom
           <SectionLabel className="mb-2">{t("sections.about")}</SectionLabel>
           <ListGroup>
             <ListItem icon={<LifeBuoy className="size-5" />} title={t("items.help")} right={chevron} />
+            {isAdmin(user) ? <ListItem href="/admin/paiements" icon={<ShieldCheck className="size-5" />} title={t("items.admin")} right={chevron} /> : null}
             <form action={logoutAction}>
               <button type="submit" className="flex w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-surface-2">
                 <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-surface-2 text-ink"><LogOut className="size-5" /></span>
@@ -101,7 +103,7 @@ export default async function ProfilePage({ searchParams }: { searchParams: Prom
               </button>
             </form>
           </ListGroup>
-          <p className="mt-3 text-center text-xs text-muted">SAVI · {t("items.version")} 0.3.0</p>
+          <p className="mt-3 text-center text-xs text-muted">SAVI · {t("items.version")} 0.5.0</p>
         </section>
       </div>
     </>
