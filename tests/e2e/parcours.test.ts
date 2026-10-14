@@ -18,7 +18,7 @@ const awa = new Client(base);
 const issa = new Client(base);
 const anon = new Client(base);
 // Site distant : mot de passe aléatoire par exécution (les comptes sont supprimés en fin de parcours).
-const password = process.env.E2E_REMOTE === "1" ? `Distant-${Math.random().toString(36).slice(2, 10)}-${Date.now() % 1000}` : "Secret-Awa-2026";
+let password = process.env.E2E_REMOTE === "1" ? `Distant-${Math.random().toString(36).slice(2, 10)}-${Date.now() % 1000}` : "Secret-Awa-2026";
 const reg = { firstName: "Awa", password, level: "3e", country: "BF", consent: "on" };
 const pdf = new Uint8Array(readFileSync("tests/fixtures/cours-pythagore.pdf"));
 const png = new Uint8Array(readFileSync("tests/fixtures/devoir-equation.png"));
@@ -287,6 +287,26 @@ describe("cloisonnement entre comptes", () => {
   });
 });
 
+describe("mot de passe", () => {
+  it("change le mot de passe : ancien exigé, autres sessions déconnectées, nouvelle connexion possible", async () => {
+    const fields = await awa.actionFields("/profil?mdp=form", 'name="currentPassword"');
+    const wrong = await awa.postForm("/profil?mdp=form", { ...fields, currentPassword: "faux-mot-de-passe", newPassword: `${password}-2`, confirmPassword: `${password}-2` });
+    expect(wrong.location).toMatch(/mdp=wrong_password/);
+    const mismatch = await awa.postForm("/profil?mdp=form", { ...fields, currentPassword: password, newPassword: `${password}-2`, confirmPassword: `${password}-3` });
+    expect(mismatch.location).toMatch(/mdp=mismatch/);
+    const ok = await awa.postForm("/profil?mdp=form", { ...fields, currentPassword: password, newPassword: `${password}-2`, confirmPassword: `${password}-2` });
+    expect(ok.location).toMatch(/mdp=ok/);
+    expect((await awa.get("/accueil")).status).toBe(200); // l'appareil courant reste connecté
+    // l'ancien mot de passe ne fonctionne plus, le nouveau oui
+    const fresh = new Client(base);
+    const old = await fresh.postForm("/connexion", { ...(await fresh.actionFields("/connexion")), identifier: E2E_ADMIN, password });
+    expect(old.status).toBe(200);
+    const neu = await fresh.postForm("/connexion", { ...(await fresh.actionFields("/connexion")), identifier: E2E_ADMIN, password: `${password}-2` });
+    expect(neu.location).toBe("/accueil");
+    password = `${password}-2`;
+  });
+});
+
 describe("suppression de compte", () => {
   it("supprime les comptes de test : confirmation exigée, données effacées, connexion impossible ensuite", async () => {
     // sans le mot « SUPPRIMER », rien n'est supprimé
@@ -301,7 +321,7 @@ describe("suppression de compte", () => {
     expect(relogin.status).toBe(200); // reste sur la page avec une erreur : le compte n'existe plus
 
     // second élève : reconnexion puis suppression (aucun compte de test ne subsiste sur le site)
-    const login = await issa.postForm("/connexion", { ...(await issa.actionFields("/connexion")), identifier: `issa${stamp}@exemple.com`, password });
+    const login = await issa.postForm("/connexion", { ...(await issa.actionFields("/connexion")), identifier: `issa${stamp}@exemple.com`, password: reg.password });
     expect(login.status).toBe(303);
     const gone = await issa.postForm("/profil?delete=confirm", { ...(await issa.actionFields("/profil?delete=confirm", 'name="confirm"')), confirm: "SUPPRIMER" });
     expect(gone.location).toMatch(/^\/bienvenue\?deleted=1/);

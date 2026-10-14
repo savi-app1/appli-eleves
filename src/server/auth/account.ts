@@ -119,7 +119,6 @@ export async function changePassword(db: Db, userId: string, current: string, ne
   await audit(db, "auth.password_changed", userId);
 }
 
-/** Suppression définitive : les tables liées sont en ON DELETE CASCADE ; l'audit garde une trace anonymisée. */
 /**
  * Suppression définitive : fichiers importés effacés du stockage (au mieux : un fichier déjà absent n'empêche rien),
  * puis toutes les données de l'élève par cascade (conversations, documents, quiz, paiements, sessions…).

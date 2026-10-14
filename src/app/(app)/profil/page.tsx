@@ -1,19 +1,22 @@
 import { getFormatter, getTranslations } from "next-intl/server";
-import { Bell, ChevronRight, CreditCard, Download, FileText, History, LifeBuoy, Languages, LogOut, Pencil, Shield, ShieldCheck, Trash2 } from "lucide-react";
+import { Bell, ChevronRight, CreditCard, Download, FileText, History, KeyRound, LifeBuoy, Languages, LogOut, Pencil, Shield, ShieldCheck, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/form";
-import { ListGroup, ListItem, PageHeader } from "@/components/ui/page";
+import { Field, Input } from "@/components/ui/form";
+import { Banner, ListGroup, ListItem, PageHeader } from "@/components/ui/page";
 import { SectionLabel } from "@/components/ui/card";
 import { requireUser } from "@/server/auth/current";
 import { isAdmin } from "@/server/billing/admin";
-import { deleteAccountAction, logoutAction } from "@/server/auth/actions";
+import { changePasswordAction, deleteAccountAction, logoutAction } from "@/server/auth/actions";
 import { initials } from "@/lib/utils";
 import { EXAM_COUNTRIES } from "@/lib/exam-catalogue";
 
-export default async function ProfilePage({ searchParams }: { searchParams: Promise<{ delete?: string }> }) {
+const PASSWORD_ERRORS = ["wrong_password", "password_too_short", "password_too_long", "password_same", "mismatch"] as const;
+
+export default async function ProfilePage({ searchParams }: { searchParams: Promise<{ delete?: string; mdp?: string }> }) {
   const { user, entitlement } = await requireUser();
-  const { delete: del } = await searchParams;
+  const { delete: del, mdp } = await searchParams;
+  const passwordError = (PASSWORD_ERRORS as readonly string[]).includes(mdp ?? "") ? (mdp as (typeof PASSWORD_ERRORS)[number]) : null;
   const t = await getTranslations("profile");
   const ta = await getTranslations("auth");
   const ts = await getTranslations("subscription");
@@ -53,7 +56,28 @@ export default async function ProfilePage({ searchParams }: { searchParams: Prom
           <ListGroup>
             <ListItem href="/abonnement" icon={<CreditCard className="size-5" />} title={t("items.subscription")} subtitle={subscriptionSubtitle} right={subscriptionBadge} />
             <ListItem href="/profil/historique" icon={<History className="size-5" />} title={t("items.history")} right={chevron} />
+            <ListItem href="/profil?mdp=form" icon={<KeyRound className="size-5" />} title={t("items.password")} right={chevron} />
           </ListGroup>
+          {mdp === "ok" ? <Banner tone="green" className="mt-3">{t("password.ok")}</Banner> : null}
+          {mdp === "form" || passwordError ? (
+            <form action={changePasswordAction} className="mt-3 space-y-3 rounded-[var(--radius-card)] border border-line bg-surface p-4">
+              <p className="text-sm font-semibold text-ink">{t("password.title")}</p>
+              {passwordError ? <Banner tone="danger">{t(`password.errors.${passwordError}`)}</Banner> : null}
+              <Field label={t("password.current")} htmlFor="currentPassword">
+                <Input id="currentPassword" name="currentPassword" type="password" autoComplete="current-password" required />
+              </Field>
+              <Field label={t("password.new")} htmlFor="newPassword" hint={t("password.hint")}>
+                <Input id="newPassword" name="newPassword" type="password" autoComplete="new-password" minLength={8} required />
+              </Field>
+              <Field label={t("password.confirm")} htmlFor="confirmPassword">
+                <Input id="confirmPassword" name="confirmPassword" type="password" autoComplete="new-password" minLength={8} required />
+              </Field>
+              <div className="flex gap-2">
+                <a href="/profil" className="inline-flex h-11 flex-1 items-center justify-center rounded-[var(--radius-btn)] border border-line bg-surface text-[15px] font-semibold text-ink">{t("cancel")}</a>
+                <Button type="submit" className="flex-1">{t("password.submit")}</Button>
+              </div>
+            </form>
+          ) : null}
         </section>
 
         <section>
