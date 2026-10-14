@@ -4,7 +4,7 @@ Plateforme éducative intelligente pour les élèves, étudiants et candidats au
 et concours d'Afrique de l'Ouest : tuteur IA, correction de devoirs, cours personnels,
 quiz, examens blancs et suivi de progression.
 
-> **État du projet : Étapes 4 à 6 livrées — MVP pédagogique, abonnement/paiement préparé, tests et durcissement.** Tuteur IA en flux, mode strict sur les documents
+> **État du projet : Étapes 1 à 7 livrées — prêt pour les tests de validation avant ouverture (étape 8).** Tuteur IA en flux, mode strict sur les documents
 > de l'élève (avec sources citées et signalement de ce qui manque), import et lecture de cours (PDF, photos),
 > fiches et exercices générés, quiz corrigés côté serveur, correction de devoirs en deux temps (texte lu →
 > vérification → analyse), examens blancs chronométrés, progression et objectifs, historique épinglable.
@@ -15,7 +15,8 @@ quiz, examens blancs et suivi de progression.
 > Fondations : [`docs/03-fondations.md`](docs/03-fondations.md) ·
 > MVP pédagogique : [`docs/04-mvp-pedagogique.md`](docs/04-mvp-pedagogique.md) ·
 > Abonnement et paiement : [`docs/05-abonnements-paiement.md`](docs/05-abonnements-paiement.md) ·
-> Tests et sécurité : [`docs/06-tests-et-securite.md`](docs/06-tests-et-securite.md).
+> Tests et sécurité : [`docs/06-tests-et-securite.md`](docs/06-tests-et-securite.md) ·
+> Déploiement et sauvegardes : [`docs/07-deploiement.md`](docs/07-deploiement.md).
 
 ## Pile technique
 
@@ -50,7 +51,7 @@ Autres commandes :
 
 ```bash
 npm run build && npm start      # version de production
-npm test                        # tests Vitest (64 tests unitaires + intégration, PostgreSQL en mémoire, IA simulée)
+npm test                        # tests Vitest (66 tests unitaires + intégration, PostgreSQL en mémoire, IA simulée)
 npm run build && npm run test:e2e   # parcours de bout en bout (19 tests HTTP contre le serveur construit)
 npm run lint                    # ESLint
 npm run typecheck               # TypeScript
@@ -80,7 +81,8 @@ Pour brancher un vrai modèle d'IA : renseigner `AI_PROVIDER=anthropic` et `ANTH
 | `messages/` | Fichiers de traduction (`fr.json` est la référence ; les autres retombent dessus) |
 | `src/lib/` | Utilitaires et catalogue des examens (`exam-catalogue.ts`) |
 | `public/icons/` | Icônes PWA générées (`scripts/gen-icons.mjs`) |
-| `docs/` | Audit, architecture, plan, guide des maquettes (puis déploiement, sauvegarde, sécurité) |
+| `docs/` | Audit et architecture, maquettes, fondations, MVP pédagogique, abonnement/paiement, tests et sécurité, déploiement et sauvegardes |
+| `Dockerfile`, `docker-compose.yml` | Déploiement sur VPS (PostgreSQL + application), voir `docs/07-deploiement.md` |
 | `legacy/` | Archive intacte du premier prototype (lecture seule) |
 
 ## Principes non négociables

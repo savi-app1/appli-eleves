@@ -1,6 +1,7 @@
 import { createHash, randomUUID } from "node:crypto";
 import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { S3StorageProvider, s3ConfigFromEnv } from "./s3";
 
 /**
  * Stockage des fichiers importés (PDF, photos de devoirs, cours).
@@ -76,11 +77,15 @@ export class LocalStorageProvider implements StorageProvider {
 }
 
 let provider: StorageProvider | undefined;
-/** Sélection par variable d'environnement : STORAGE_PROVIDER=local (défaut) | s3 (ajouté à l'étape 7 avec les identifiants de l'hébergeur). */
+/** Sélection par variable d'environnement : STORAGE_PROVIDER=local (défaut, disque du serveur) | s3 (R2, B2, S3, MinIO — bucket privé). */
 export function getStorage(): StorageProvider {
   if (provider) return provider;
   const kind = process.env.STORAGE_PROVIDER ?? "local";
   if (kind === "local") provider = new LocalStorageProvider();
-  else throw new Error(`STORAGE_PROVIDER=${kind} non configuré : seul "local" est disponible pour l'instant (S3/R2 prévu à l'étape 7).`);
+  else if (kind === "s3") {
+    const cfg = s3ConfigFromEnv();
+    if (!cfg) throw new Error("STORAGE_PROVIDER=s3 : S3_ENDPOINT, S3_BUCKET, S3_ACCESS_KEY_ID et S3_SECRET_ACCESS_KEY sont requis.");
+    provider = new S3StorageProvider(cfg);
+  } else throw new Error(`STORAGE_PROVIDER=${kind} inconnu (local | s3).`);
   return provider;
 }

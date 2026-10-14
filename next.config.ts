@@ -27,6 +27,8 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  // Image Docker (VPS) : sortie autonome. Non activé par défaut pour garder `next start` et Vercel inchangés.
+  output: process.env.NEXT_OUTPUT === "standalone" ? "standalone" : undefined,
   poweredByHeader: false,
   // Application authentifiée : rendu dynamique classique (pas de Cache Components)
   // pour garder un modèle simple et prévisible côté sécurité.

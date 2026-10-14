@@ -85,4 +85,4 @@ Réponses : `200 {ok:true,outcome}`, `401` signature invalide, `404` prestataire
 `tests/unit/billing.test.ts` (signature, références, calcul des périodes, masquage, configuration, interdiction du bac à
 sable en production) et `tests/integration/billing.test.ts` (paiement en attente, activation idempotente, prolongation,
 montant erroné, référence inconnue, confirmation manuelle + audit, webhook HTTP avec signature invalide/valide, suppression
-de compte). Total du projet : 64 tests.
+de compte). Total du projet : 66 tests (+ 19 de bout en bout).
