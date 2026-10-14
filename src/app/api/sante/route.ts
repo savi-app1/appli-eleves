@@ -1,5 +1,6 @@
 import { sql } from "drizzle-orm";
 import { databaseUrl, getDb } from "@/db/client";
+import { aiProviderName } from "@/server/ai/provider";
 import { appEnv, paymentProviderConfig } from "@/server/billing/providers";
 
 export const dynamic = "force-dynamic";
@@ -23,7 +24,7 @@ export async function GET() {
     appEnv() !== "production"
       ? {
           envKeys: Object.keys(process.env)
-            .filter((k) => /DATABASE|NEON|SUPABASE|^NETLIFY_|^CONTEXT$|^DEPLOY_|^SITE_NAME$|^URL$/.test(k) && !/TOKEN|KEY|SECRET/.test(k))
+            .filter((k) => /DATABASE|NEON|SUPABASE|^NETLIFY_|^CONTEXT$|^DEPLOY_|^SITE_NAME$|^URL$|^ANTHROPIC_|^OPENAI_|^GEMINI_/.test(k))
             .sort(),
           build: process.env.SAVI_BUILD_INFO,
         }
@@ -34,7 +35,7 @@ export async function GET() {
     db,
     ...(dbDetail && appEnv() !== "production" ? { dbDetail } : {}),
     storage: process.env.STORAGE_PROVIDER ?? "local",
-    ai: process.env.AI_PROVIDER ?? "mock",
+    ai: aiProviderName(),
     payment: payment.enabled ? payment.provider.id : `disabled:${payment.reason}`,
     time: new Date().toISOString(),
     ...diagnostic,

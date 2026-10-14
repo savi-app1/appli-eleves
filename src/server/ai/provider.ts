@@ -6,11 +6,25 @@ import { mockAnswer } from "./mock-brain";
 export type Tier = "fast" | "strong";
 export type AiMode = "live" | "demo";
 
-/** Fournisseur actif : anthropic (défaut recommandé), openai (ou API compatible : Mistral, Groq, OpenRouter…), mock. */
+/**
+ * Fournisseur actif : anthropic (défaut recommandé), openai (ou API compatible : Mistral, Groq, OpenRouter…), mock.
+ * `auto` (défaut) : anthropic si ANTHROPIC_API_KEY est présente (clé propre ou injectée par l'hébergeur, ex. passerelle IA
+ * Netlify), sinon openai si OPENAI_API_KEY, sinon mock (IA simulée, affichée comme telle).
+ */
 export function aiProviderName(): "anthropic" | "openai" | "mock" {
-  const p = (process.env.AI_PROVIDER ?? "mock").toLowerCase();
+  const p = (process.env.AI_PROVIDER ?? "auto").toLowerCase();
   if (p === "anthropic" || p === "openai") return p;
+  if (p === "mock") return "mock";
+  if (process.env.ANTHROPIC_API_KEY) return "anthropic";
+  if (process.env.OPENAI_API_KEY) return "openai";
   return "mock";
+}
+
+/** URL de base d'une API compatible (passerelle, proxy) : les SDK officiels attendent la racine, le SDK IA attend …/v1. */
+function baseUrlWithV1(raw: string | undefined): string | undefined {
+  if (!raw) return undefined;
+  const trimmed = raw.replace(/\/+$/, "");
+  return /\/v1$/.test(trimmed) ? trimmed : `${trimmed}/v1`;
 }
 
 /** « demo » = IA simulée (aucune clé configurée) : l'interface doit l'afficher clairement. */
@@ -86,12 +100,12 @@ export async function getModel(tier: Tier): Promise<LanguageModel> {
   if (p === "anthropic") {
     if (!process.env.ANTHROPIC_API_KEY) throw new AiUnavailableError("ANTHROPIC_API_KEY manquante.");
     const { createAnthropic } = await import("@ai-sdk/anthropic");
-    return createAnthropic({ apiKey: process.env.ANTHROPIC_API_KEY })(modelId(tier));
+    return createAnthropic({ apiKey: process.env.ANTHROPIC_API_KEY, baseURL: baseUrlWithV1(process.env.ANTHROPIC_BASE_URL) })(modelId(tier));
   }
   if (p === "openai") {
     if (!process.env.OPENAI_API_KEY) throw new AiUnavailableError("OPENAI_API_KEY manquante.");
     const { createOpenAI } = await import("@ai-sdk/openai");
-    return createOpenAI({ apiKey: process.env.OPENAI_API_KEY, baseURL: process.env.OPENAI_BASE_URL })(modelId(tier));
+    return createOpenAI({ apiKey: process.env.OPENAI_API_KEY, baseURL: baseUrlWithV1(process.env.OPENAI_BASE_URL) })(modelId(tier));
   }
   return mockModel();
 }

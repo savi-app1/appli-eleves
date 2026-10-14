@@ -102,7 +102,7 @@ fichiers : extraire l'archive dans le volume `uploads`. Tester la restauration u
 |---|---|---|
 | Hébergement | Site Netlify relié au dépôt GitHub par l'application Netlify (déjà installée sur le dépôt) | Seul canal de déploiement utilisable sans identifiant à transmettre ; HTTPS, CDN et aperçus par pull request inclus |
 | Construction | `netlify.toml` : `npm run ocr:setup && npm run build`, Node 22, plugin `@netlify/plugin-nextjs` | Télécharge les modèles OCR puis construit Next.js ; le plugin transforme l'application en fonctions serverless |
-| Base de données | **Netlify DB** (PostgreSQL Neon) provisionnée automatiquement grâce à la dépendance `@netlify/neon` ; variable `NETLIFY_DATABASE_URL` injectée | Aucune clé à copier ; `src/db/client.ts` l'utilise si `DATABASE_URL` est absent et **exécute les migrations au premier démarrage** (verrou `pg_advisory_lock`, désactivable avec `DB_AUTO_MIGRATE=0`) |
+| Base de données | **Netlify Database** (PostgreSQL managé, infrastructure Neon) provisionnée automatiquement par l'étape de build « Netlify Database setup » dès que `@netlify/database` figure dans les dépendances ; variable `NETLIFY_DB_URL` injectée dans les fonctions. Production = base principale ; chaque branche/aperçu = **branche de base** isolée | Aucune clé à copier ; `src/db/client.ts` l'utilise si `DATABASE_URL` est absent et **exécute les migrations Drizzle au premier démarrage** (verrou `pg_advisory_lock`, désactivable avec `DB_AUTO_MIGRATE=0`) |
 | Fichiers | **Netlify Blobs**, magasin privé `savi-fichiers` (`STORAGE_PROVIDER=netlify-blobs`) | Disque des fonctions en lecture seule ; les documents importés doivent survivre aux redéploiements |
 | Réglages | Préréglage `SAVI_DEPLOY_PRESET=netlify-preview` dans `next.config.ts` : `APP_ENV=preview`, IA simulée, paiement bac à sable, OCR limité à 8 s, pool de 2 connexions, administrateurs `admin.savi@exemple.com` | Netlify ne transmet pas les variables de `netlify.toml` aux fonctions à l'exécution : les valeurs **non secrètes** sont donc figées à la construction. Tout secret se met dans l'interface Netlify |
 | Vérification | Flux GitHub Actions « Vérification du déploiement » (`.github/workflows/verification-deploiement.yml`) : attend la fin du déploiement, appelle `GET /api/sante` puis rejoue les 18 scénarios de bout en bout contre le site réel | Preuve automatique que le site en ligne fonctionne (inscription, tuteur, documents, quiz, correction, paiement bac à sable, sécurité) |
@@ -116,15 +116,16 @@ Point de santé : `GET /api/sante` → `{"ok":true,"env":"preview","db":"ok","st
   échoue alors proprement et l'élève peut saisir le texte. Avec une clé IA réelle, l'OCR passe par la vision du modèle
   (plus rapide et plus fiable). Les réponses du tuteur en flux ne sont pas concernées (streaming).
 - 300 minutes de construction/mois, 100 Go de bande passante : suffisant pour un pilote ; au-delà, offre Pro (19 $/mois).
-- Netlify DB : 0,5 Go de stockage et 190 heures de calcul/mois sur l'offre gratuite Neon ; voir 8.3 pour la pérennité.
+- Netlify Database : quotas de l'offre gratuite (stockage et calcul limités) ; consulter Netlify → *Database* pour l'usage et voir 8.3.
 
 ### 8.3 Actions à faire par l'équipe SAVI (une seule fois)
 
-1. **Réclamer la base de données sous 7 jours** : Netlify → site → *Extensions* → *Neon* → *Claim database*. Une base
-   non réclamée est **supprimée automatiquement après 7 jours** (avec les comptes de test créés dedans). Une fois
-   réclamée, elle est rattachée à un compte Neon de l'équipe (offre gratuite) et conservée.
+1. **Vérifier la base de données** dans Netlify → site → *Database* : état, usage, sauvegardes ; si l'interface propose de
+   « réclamer » (*claim*) la base auprès de Neon, le faire sans attendre (une base non réclamée peut être supprimée après
+   quelques jours).
 2. Renommer le site et, le moment venu, relier le nom de domaine (*Domain management*).
 3. Ajouter les secrets (IA, paiement) dans *Environment variables* quand ils seront disponibles — jamais dans le dépôt.
 4. Activer les sauvegardes : Neon conserve 24 h d'historique (restauration à un instant donné) sur l'offre gratuite ;
-   pour un export quotidien, utiliser `pg_dump` avec `NETLIFY_DATABASE_URL_UNPOOLED` (section 4). Les fichiers des élèves
+   pour un export quotidien, utiliser `pg_dump` avec `NETLIFY_DB_URL` (section 4 ; `netlify database connect` donne aussi
+   un accès SQL). Les fichiers des élèves
    sont dans Netlify Blobs (durables, répliqués), à exporter avec `netlify blobs:list/get` si besoin.

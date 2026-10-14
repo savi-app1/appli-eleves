@@ -35,7 +35,7 @@ const presetEnv: Record<string, string> =
   deployPreset === "netlify-preview"
     ? {
         APP_ENV: "preview",
-        AI_PROVIDER: process.env.AI_PROVIDER ?? "mock",
+        // AI_PROVIDER volontairement absent : détection à l'exécution (clé injectée par l'hébergeur ou définie dans son interface).
         PAYMENT_PROVIDER: "sandbox",
         STORAGE_PROVIDER: "netlify-blobs",
         ADMIN_IDENTIFIERS: process.env.ADMIN_IDENTIFIERS ?? "admin.savi@exemple.com,admin.e2e@exemple.com",
@@ -47,7 +47,7 @@ const presetEnv: Record<string, string> =
           context: process.env.CONTEXT ?? null,
           builtAt: new Date().toISOString(),
           envKeys: Object.keys(process.env)
-            .filter((k) => /DATABASE|NEON|SUPABASE|^NETLIFY_|^DEPLOY_|^SITE_NAME$/.test(k) && !/TOKEN|KEY|SECRET/.test(k))
+            .filter((k) => /DATABASE|NEON|SUPABASE|^NETLIFY_|^DEPLOY_|^SITE_NAME$|^ANTHROPIC_|^OPENAI_|^GEMINI_/.test(k))
             .sort(),
         }),
       }
