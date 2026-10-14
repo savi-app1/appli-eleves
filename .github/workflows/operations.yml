@@ -1,0 +1,49 @@
+name: Opérations sur le site déployé
+
+# Déclenché par une modification de .github/operations.json (aucun secret dedans) :
+#  - « sondes »  : interroge /api/sante des URL listées (état de la base, du stockage, de l'IA, commit construit) ;
+#  - « comptes » : crée l'administrateur initial / des comptes de démonstration sur le site, mots de passe générés sur
+#                  place et publiés uniquement chiffrés avec la clé publique fournie (voir scripts/creer-comptes.mjs).
+# Le rapport est publié comme « check » sur le commit (lisible via l'API GitHub).
+on:
+  push:
+    paths: [".github/operations.json"]
+
+jobs:
+  operer:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      checks: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Exécuter les opérations
+        run: |
+          set -o pipefail
+          {
+            echo "# Opérations ($(date -u +%FT%TZ))"
+            for u in $(node -e "const o=require('./.github/operations.json'); console.log((o.sondes||[]).join(' '))"); do
+              echo; echo "## Sonde $u"; echo '```'
+              curl -sS -m 60 -o sante.json -w "→ %{http_code} en %{time_total}s\n" "$u/api/sante" || true
+              head -c 3000 sante.json 2>/dev/null; echo
+              curl -sS -m 60 -o /dev/null -w "page de connexion → %{http_code} en %{time_total}s\n" "$u/connexion" || true
+              echo '```'
+            done
+            if node -e "const o=require('./.github/operations.json'); process.exit(o.comptes && o.comptes.url ? 0 : 1)"; then
+              echo; echo "## Comptes"; echo '```'
+              node scripts/creer-comptes.mjs \
+                "$(node -e "console.log(require('./.github/operations.json').comptes.url)")" \
+                "$(node -e "console.log(require('./.github/operations.json').comptes.cle_publique)")" \
+                $(node -e "console.log(require('./.github/operations.json').comptes.identifiants.join(' '))")
+              echo '```'
+            fi
+          } | tee rapport.md
+      - name: Publier le rapport
+        if: always()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/publish-report.mjs rapport.md "Opérations" "${{ job.status == 'success' && 'success' || 'failure' }}"

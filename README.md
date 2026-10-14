@@ -4,7 +4,7 @@ Plateforme éducative intelligente pour les élèves, étudiants et candidats au
 et concours d'Afrique de l'Ouest : tuteur IA, correction de devoirs, cours personnels,
 quiz, examens blancs et suivi de progression.
 
-> **État du projet : Étapes 1 à 7 livrées et déployées en préproduction (Netlify, voir `docs/07-deploiement.md` § 8) — prêt pour les tests de validation avant ouverture (étape 8).** Tuteur IA en flux, mode strict sur les documents
+> **État du projet : Étapes 1 à 7 livrées et en ligne en préproduction — <https://cosmic-otter-c3fd6b.netlify.app> (Netlify : base PostgreSQL, stockage, IA Claude via la passerelle Netlify ; voir `docs/07-deploiement.md` § 8). Chaque déploiement est vérifié automatiquement par le parcours de bout en bout. Prêt pour les tests de validation avant ouverture (étape 8).** Tuteur IA en flux, mode strict sur les documents
 > de l'élève (avec sources citées et signalement de ce qui manque), import et lecture de cours (PDF, photos),
 > fiches et exercices générés, quiz corrigés côté serveur, correction de devoirs en deux temps (texte lu →
 > vérification → analyse), examens blancs chronométrés, progression et objectifs, historique épinglable.
