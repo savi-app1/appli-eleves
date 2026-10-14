@@ -1,0 +1,170 @@
+@import "tailwindcss";
+
+/* Thème sombre piloté par la classe .dark sur <html> (choix utilisateur, pas seulement le système) */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ------------------------------------------------------------------
+   Jetons de design SAVI — vert principal, blanc, noir, gris clair
+   ------------------------------------------------------------------ */
+:root {
+  --savi-bg: #f4f6f5;
+  --savi-surface: #ffffff;
+  --savi-surface-2: #eef2f0;
+  --savi-ink: #17202a;
+  --savi-muted: #667085;
+  --savi-line: #e3e8e6;
+  --savi-green: #0e7c3a;
+  --savi-green-strong: #0b6530;
+  --savi-green-soft: #ddf3e4;
+  --savi-green-ink: #0a5a2b;
+  --savi-black: #17202a;
+  --savi-danger: #b3261e;
+  --savi-danger-soft: #fbe3e1;
+  --savi-warning: #b7791f;
+  --savi-warning-soft: #fdf3dc;
+  --savi-info-soft: #e6eef9;
+  --savi-focus: #1e6fd9;
+  color-scheme: light;
+}
+
+.dark {
+  --savi-bg: #0f1412;
+  --savi-surface: #171d1a;
+  --savi-surface-2: #1f2724;
+  --savi-ink: #ecf1ee;
+  --savi-muted: #9aa5a0;
+  --savi-line: #2a332f;
+  --savi-green: #22a55b;
+  --savi-green-strong: #1c8f4e;
+  --savi-green-soft: #16301f;
+  --savi-green-ink: #9fe2b8;
+  --savi-black: #0b0f0d;
+  --savi-danger: #f28b82;
+  --savi-danger-soft: #3a1f1d;
+  --savi-warning: #f2c061;
+  --savi-warning-soft: #3a2f16;
+  --savi-info-soft: #1c2735;
+  --savi-focus: #7fb3ff;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-bg: var(--savi-bg);
+  --color-surface: var(--savi-surface);
+  --color-surface-2: var(--savi-surface-2);
+  --color-ink: var(--savi-ink);
+  --color-muted: var(--savi-muted);
+  --color-line: var(--savi-line);
+  --color-green: var(--savi-green);
+  --color-green-strong: var(--savi-green-strong);
+  --color-green-soft: var(--savi-green-soft);
+  --color-green-ink: var(--savi-green-ink);
+  --color-black: var(--savi-black);
+  --color-danger: var(--savi-danger);
+  --color-danger-soft: var(--savi-danger-soft);
+  --color-warning: var(--savi-warning);
+  --color-warning-soft: var(--savi-warning-soft);
+  --color-info-soft: var(--savi-info-soft);
+  --color-focus: var(--savi-focus);
+
+  --font-sans:
+    system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+    "Noto Sans", sans-serif;
+
+  --radius-card: 16px;
+  --radius-btn: 12px;
+
+  --shadow-card: 0 1px 2px rgb(23 32 42 / 0.04), 0 4px 14px rgb(23 32 42 / 0.05);
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: var(--savi-bg);
+  color: var(--savi-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overscroll-behavior-y: none;
+}
+
+/* Accessibilité : focus visible net, cibles tactiles confortables */
+:focus-visible {
+  outline: 3px solid var(--savi-focus);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+button,
+[role="button"],
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Zones sûres (encoches, barre de gestes Android) */
+.pb-safe {
+  padding-bottom: calc(0.5rem + env(safe-area-inset-bottom, 0px));
+}
+.pt-safe {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+/* Barre de défilement discrète */
+.scrollbar-thin {
+  scrollbar-width: thin;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  scrollbar-width: none;
+}
+
+/* Animation d'apparition douce des messages */
+@keyframes savi-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-fade-up {
+  animation: savi-fade-up 0.22s ease-out both;
+}
+
+@keyframes savi-pulse-dot {
+  0%,
+  80%,
+  100% {
+    transform: scale(0.6);
+    opacity: 0.4;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+.typing-dot {
+  animation: savi-pulse-dot 1.2s infinite ease-in-out;
+}
+.typing-dot:nth-child(2) {
+  animation-delay: 0.15s;
+}
+.typing-dot:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
