@@ -52,7 +52,7 @@ Autres commandes :
 ```bash
 npm run build && npm start      # version de production
 npm test                        # tests Vitest (66 tests unitaires + intégration, PostgreSQL en mémoire, IA simulée)
-npm run build && npm run test:e2e   # parcours de bout en bout (19 tests HTTP contre le serveur construit)
+npm run build && npm run test:e2e   # parcours de bout en bout (21 tests HTTP contre le serveur construit)
 npm run lint                    # ESLint
 npm run typecheck               # TypeScript
 npm run db:generate             # génère une migration après modification de src/db/schema.ts
