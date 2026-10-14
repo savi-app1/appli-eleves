@@ -1,7 +1,6 @@
 import "server-only";
 import { mkdir } from "node:fs/promises";
 import { drizzle as drizzlePg } from "drizzle-orm/node-postgres";
-import { drizzle as drizzlePglite } from "drizzle-orm/pglite";
 import type { PgDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core";
 import * as schema from "./schema";
 
@@ -53,8 +52,10 @@ async function create(): Promise<Db> {
     const pool = new Pool({ connectionString: url, max: Number(process.env.DATABASE_POOL_MAX ?? 5) });
     return drizzlePg(pool, { schema }) as unknown as Db;
   }
+  // Imports dynamiques : PGlite (≈ 15 Mo) n'est chargé qu'en développement/tests, jamais dans un paquet serverless.
   const { PGlite } = await import("@electric-sql/pglite");
   const { unaccent } = await import("@electric-sql/pglite/contrib/unaccent");
+  const { drizzle: drizzlePglite } = await import("drizzle-orm/pglite");
   const dataDir = process.env.PGLITE_DATA_DIR ?? "./.data/pglite";
   await mkdir(dataDir, { recursive: true });
   const client = await PGlite.create({ dataDir, extensions: { unaccent } });
