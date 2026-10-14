@@ -31,17 +31,25 @@ const securityHeaders = [
  * les variables de netlify.toml aux fonctions à l'exécution.
  */
 const deployPreset = process.env.SAVI_DEPLOY_PRESET;
+/**
+ * Préréglage d'hébergement (SAVI_DEPLOY_PRESET=netlify-preview) : valeurs NON secrètes figées à la construction,
+ * car Netlify ne transmet pas les variables de netlify.toml aux fonctions à l'exécution. Toute variable définie dans
+ * l'interface de l'hébergeur (disponible au moment du build) prime sur ces valeurs par défaut ; les secrets (clé IA,
+ * secret de webhook…) ne passent jamais ici : ils sont lus à l'exécution.
+ */
 const presetEnv: Record<string, string> =
   deployPreset === "netlify-preview"
     ? {
-        APP_ENV: "preview",
+        APP_ENV: process.env.APP_ENV ?? "preview",
         // AI_PROVIDER volontairement absent : détection à l'exécution (clé injectée par l'hébergeur ou définie dans son interface).
-        PAYMENT_PROVIDER: "sandbox",
-        STORAGE_PROVIDER: "netlify-blobs",
-        ADMIN_IDENTIFIERS: process.env.ADMIN_IDENTIFIERS ?? "admin.savi@exemple.com,admin.e2e@exemple.com",
-        OCR_TIMEOUT_MS: "8000",
-        DATABASE_POOL_MAX: "2",
-        TRIAL_DAYS: "4",
+        PAYMENT_PROVIDER: process.env.PAYMENT_PROVIDER ?? "sandbox",
+        STORAGE_PROVIDER: process.env.STORAGE_PROVIDER ?? "netlify-blobs",
+        // Administrateur initial : compte à créer sur le site dès la mise en ligne (puis remplacer par l'adresse réelle
+        // de l'équipe dans les variables d'environnement de l'hébergeur).
+        ADMIN_IDENTIFIERS: process.env.ADMIN_IDENTIFIERS ?? "admin.savi@exemple.com",
+        OCR_TIMEOUT_MS: process.env.OCR_TIMEOUT_MS ?? "8000",
+        DATABASE_POOL_MAX: process.env.DATABASE_POOL_MAX ?? "2",
+        TRIAL_DAYS: process.env.TRIAL_DAYS ?? "4",
         // Diagnostic (noms de variables seulement, jamais de valeurs) exposé par /api/sante hors production.
         SAVI_BUILD_INFO: JSON.stringify({
           context: process.env.CONTEXT ?? null,

@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { beforeAll, describe, expect, it } from "vitest";
 import { Client, fieldsOf, forms, formFields, sseText, text } from "./client";
-import { E2E_ADMIN, E2E_SECRET } from "./server";
+import { E2E_ADMIN as LOCAL_ADMIN, E2E_SECRET } from "./server";
 import { signPayload } from "@/server/billing/signature";
 
 /**
@@ -12,10 +12,13 @@ const base = process.env.E2E_BASE_URL!.replace(/\/$/, "");
 /** Mode distant (déploiement réel) : pas de secret de webhook, OCR éventuellement limité par l'hébergeur. */
 const remote = process.env.E2E_REMOTE === "1";
 const stamp = Date.now();
+/** Compte principal : administrateur de test en local (ADMIN_IDENTIFIERS du serveur E2E) ; sur un site distant, un simple élève unique par exécution. */
+const E2E_ADMIN = process.env.E2E_REMOTE === "1" ? `awa${stamp}@exemple.com` : LOCAL_ADMIN;
 const awa = new Client(base);
 const issa = new Client(base);
 const anon = new Client(base);
-const password = "Secret-Awa-2026";
+// Site distant : mot de passe aléatoire par exécution (les comptes sont supprimés en fin de parcours).
+const password = process.env.E2E_REMOTE === "1" ? `Distant-${Math.random().toString(36).slice(2, 10)}-${Date.now() % 1000}` : "Secret-Awa-2026";
 const reg = { firstName: "Awa", password, level: "3e", country: "BF", consent: "on" };
 const pdf = new Uint8Array(readFileSync("tests/fixtures/cours-pythagore.pdf"));
 const png = new Uint8Array(readFileSync("tests/fixtures/devoir-equation.png"));
@@ -68,16 +71,12 @@ describe("compte et sécurité de base", () => {
     const bad = await awa.postForm("/inscription", { ...(await awa.actionFields("/inscription")), ...reg, identifier: `e2e${stamp}@exemple.com`, password: "court" });
     expect(bad.status).toBe(200);
     expect(bad.location).toBeNull();
-    let ok = await awa.postForm("/inscription", { ...(await awa.actionFields("/inscription")), ...reg, identifier: E2E_ADMIN });
-    if (remote && ok.status === 200 && text(ok.body).includes("existe déjà")) {
-      // base persistante : le compte administrateur de test existe déjà, on se connecte
-      ok = await awa.postForm("/connexion", { ...(await awa.actionFields("/connexion")), identifier: E2E_ADMIN, password });
-    }
+    const ok = await awa.postForm("/inscription", { ...(await awa.actionFields("/inscription")), ...reg, identifier: E2E_ADMIN });
     expect(ok.status).toBe(303);
     expect(ok.location).toBe("/accueil");
     const home = await awa.get("/accueil");
     expect(home.status).toBe(200);
-    expect(text(home.body)).toMatch(remote ? /Essai gratuit|Abonnement actif/ : /Essai gratuit/);
+    expect(text(home.body)).toContain("Essai gratuit");
   });
 
   it("refuse une requête API venant d'une autre origine", async () => {
@@ -251,6 +250,11 @@ describe("abonnement et paiement (bac à sable)", () => {
 
   it("l'administration des paiements n'est visible que par un administrateur", async () => {
     const admin = await awa.get("/admin/paiements");
+    if (remote) {
+      // sur le site distant, le compte de test n'est pas administrateur : la page doit lui être refusée
+      expect(admin.status).not.toBe(200);
+      return;
+    }
     expect(admin.status).toBe(200);
     expect(text(admin.body)).toContain("Paiements à vérifier");
   });

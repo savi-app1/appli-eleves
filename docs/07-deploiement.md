@@ -8,9 +8,13 @@
   chaque pull request a son *Deploy Preview*. Environnement clairement étiqueté « préproduction » : IA simulée
   (`AI_PROVIDER=mock`), paiement en bac à sable (`PAYMENT_PROVIDER=sandbox`, `APP_ENV=preview`).
 - **Passage en production réelle** : il suffit d'ajouter dans Netlify (*Site configuration* → *Environment variables*)
-  les clés qui ne doivent jamais être dans le dépôt : `ANTHROPIC_API_KEY` + `AI_PROVIDER=anthropic`,
-  `PAYMENT_PROVIDER=webhook` + `PAYMENT_WEBHOOK_SECRET` + `PAYMENT_LINK`, `APP_ENV=production`, puis de relancer
-  un déploiement. Les variables définies dans l'interface Netlify priment sur les valeurs par défaut du préréglage.
+  ce qui ne doit jamais être dans le dépôt : `PAYMENT_PROVIDER=webhook` + `PAYMENT_WEBHOOK_SECRET` + `PAYMENT_LINK`
+  (prestataire de paiement), `ADMIN_IDENTIFIERS` (adresses réelles de l'équipe), `APP_ENV=production`, éventuellement
+  une clé `ANTHROPIC_API_KEY` propre (sinon la passerelle IA Netlify est utilisée), puis de relancer un déploiement
+  (*Deploys* → *Trigger deploy*). Les variables définies dans l'interface Netlify priment sur le préréglage.
+- **Vérification automatique** : à chaque push, le flux GitHub Actions « Vérification du déploiement » attend la fin du
+  déploiement Netlify, interroge `/api/sante` puis rejoue le parcours complet sur le site réel (comptes de test créés
+  puis supprimés) ; le rapport est publié comme *check* sur le commit.
 - Les options A (Vercel + Neon + R2) et B (VPS Docker) restent disponibles si l'équipe préfère un autre hébergeur.
 
 ## 2. Option A — Vercel + Neon + Cloudflare R2 (recommandée pour démarrer)
@@ -104,7 +108,8 @@ fichiers : extraire l'archive dans le volume `uploads`. Tester la restauration u
 | Construction | `netlify.toml` : `npm run ocr:setup && npm run build`, Node 22, plugin `@netlify/plugin-nextjs` | Télécharge les modèles OCR puis construit Next.js ; le plugin transforme l'application en fonctions serverless |
 | Base de données | **Netlify Database** (PostgreSQL managé, infrastructure Neon) provisionnée automatiquement par l'étape de build « Netlify Database setup » dès que `@netlify/database` figure dans les dépendances ; variable `NETLIFY_DB_URL` injectée dans les fonctions. Production = base principale ; chaque branche/aperçu = **branche de base** isolée | Aucune clé à copier ; `src/db/client.ts` l'utilise si `DATABASE_URL` est absent et **exécute les migrations Drizzle au premier démarrage** (verrou `pg_advisory_lock`, désactivable avec `DB_AUTO_MIGRATE=0`) |
 | Fichiers | **Netlify Blobs**, magasin privé `savi-fichiers` (`STORAGE_PROVIDER=netlify-blobs`) | Disque des fonctions en lecture seule ; les documents importés doivent survivre aux redéploiements |
-| Réglages | Préréglage `SAVI_DEPLOY_PRESET=netlify-preview` dans `next.config.ts` : `APP_ENV=preview`, IA simulée, paiement bac à sable, OCR limité à 8 s, pool de 2 connexions, administrateurs `admin.savi@exemple.com` | Netlify ne transmet pas les variables de `netlify.toml` aux fonctions à l'exécution : les valeurs **non secrètes** sont donc figées à la construction. Tout secret se met dans l'interface Netlify |
+| Intelligence artificielle | **Passerelle IA Netlify** (*AI Gateway*) : le site reçoit automatiquement `ANTHROPIC_API_KEY` + `ANTHROPIC_BASE_URL` (et OpenAI, Gemini) ; le fournisseur est détecté à l'exécution (`AI_PROVIDER=auto`) → **Claude réel** (Haiku 4.5 pour le tuteur/fiches/quiz, Sonnet 4.5 pour les corrections et le mode strict), OCR par vision du modèle | Aucune clé à gérer au départ ; la consommation est facturée en **crédits IA du compte Netlify** (quota gratuit limité : suivre *Usage* → *AI Gateway*). Pour utiliser une clé Anthropic propre, définir `ANTHROPIC_API_KEY` dans l'interface Netlify : elle prime sur la passerelle |
+| Réglages | Préréglage `SAVI_DEPLOY_PRESET=netlify-preview` dans `next.config.ts` : `APP_ENV=preview`, paiement bac à sable, OCR limité à 8 s, pool de 2 connexions, administrateur initial `admin.savi@exemple.com` — chaque valeur est remplaçable par une variable du même nom dans l'interface Netlify (lue au moment du build) | Netlify ne transmet pas les variables de `netlify.toml` aux fonctions à l'exécution : les valeurs **non secrètes** sont donc figées à la construction. Tout secret se met dans l'interface Netlify |
 | Vérification | Flux GitHub Actions « Vérification du déploiement » (`.github/workflows/verification-deploiement.yml`) : attend la fin du déploiement, appelle `GET /api/sante` puis rejoue les 18 scénarios de bout en bout contre le site réel | Preuve automatique que le site en ligne fonctionne (inscription, tuteur, documents, quiz, correction, paiement bac à sable, sécurité) |
 
 Point de santé : `GET /api/sante` → `{"ok":true,"env":"preview","db":"ok","storage":"netlify-blobs","ai":"mock","payment":"sandbox"}`
