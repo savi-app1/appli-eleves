@@ -1,0 +1,12 @@
+{
+  "_meta": {
+    "language": "Mooré",
+    "status": "beta",
+    "note": "Traduction PARTIELLE à faire valider par des locuteurs natifs avant toute annonce. Les clés absentes retombent sur le français."
+  },
+  "app": { "tagline": "Ton professeur intelligent" },
+  "home": {
+    "greeting": "Ne y yibeoogo, {name} 👋",
+    "greetingAnonymous": "Ne y yibeoogo 👋"
+  }
+}

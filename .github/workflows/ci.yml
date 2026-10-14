@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  verify:
+    name: Lint, types, tests, build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+        env:
+          NEXT_TELEMETRY_DISABLED: "1"
+      - name: Données OCR (Tesseract fra+eng) pour le parcours de bout en bout
+        run: npm run ocr:setup
+      - name: Parcours de bout en bout (serveur construit, base jetable, IA simulée, paiement bac à sable)
+        run: npm run test:e2e
+        env:
+          NEXT_TELEMETRY_DISABLED: "1"

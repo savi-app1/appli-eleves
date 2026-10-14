@@ -1,0 +1,36 @@
+# SAVI — préproduction / production sur un VPS (Docker Compose). Voir docs/07-deploiement.md
+# Secrets dans un fichier .env à côté de ce fichier (jamais versionné).
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: savi
+      POSTGRES_USER: savi
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?définir POSTGRES_PASSWORD dans .env}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U savi -d savi"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql://savi:${POSTGRES_PASSWORD}@db:5432/savi
+      UPLOADS_DIR: /app/.data/uploads
+    volumes:
+      - uploads:/app/.data/uploads
+    ports:
+      - "127.0.0.1:3000:3000" # exposé au reverse proxy local (Caddy/Nginx) qui termine le TLS
+
+volumes:
+  pgdata:
+  uploads:

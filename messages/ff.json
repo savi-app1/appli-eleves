@@ -1,0 +1,11 @@
+{
+  "_meta": {
+    "language": "Fulfulde",
+    "status": "beta",
+    "note": "Traduction PARTIELLE à faire valider par des locuteurs natifs avant toute annonce. Les clés absentes retombent sur le français."
+  },
+  "home": {
+    "greeting": "Jam waali, {name} 👋",
+    "greetingAnonymous": "Jam waali 👋"
+  }
+}

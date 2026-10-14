@@ -1,0 +1,74 @@
+name: Vérification du déploiement
+
+# Après chaque déploiement Netlify (préproduction ou production), rejoue le parcours de bout en bout
+# contre le site réellement en ligne : santé, sécurité, inscription, tuteur, documents, quiz, correction, paiement bac à sable.
+on:
+  push:
+    branches: [main, "arena/**"]
+  workflow_dispatch:
+    inputs:
+      url:
+        description: "URL du site à vérifier (laisser vide pour attendre le déploiement du commit)"
+        required: false
+        default: ""
+
+concurrency:
+  group: verification-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verifier:
+    name: Parcours réel sur le site déployé
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    permissions:
+      contents: read
+      statuses: read
+      deployments: read
+      checks: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - name: Attendre l'URL déployée
+        id: url
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ -n "${{ inputs.url }}" ]; then URL="${{ inputs.url }}"; else URL=$(node scripts/wait-deploy.mjs "${{ github.sha }}" 25); fi
+          echo "url=$URL" >> "$GITHUB_OUTPUT"
+          echo "Site : $URL"
+      - name: Santé du service
+        env:
+          URL: ${{ steps.url.outputs.url }}
+        run: |
+          set -o pipefail
+          {
+            echo "# Vérification de $URL"
+            echo; echo "## Santé"; echo '```'
+            curl -sS -m 60 -D - "$URL/api/sante" -o sante.json -w "→ %{http_code} en %{time_total}s\n" | tr -d '\r' | grep -viE "^(set-cookie|x-nf-|server-timing)" || true
+            head -c 2000 sante.json; echo
+            echo '```'
+            echo; echo "## Page de connexion"; echo '```'
+            curl -sS -m 60 -D - "$URL/connexion" -o connexion.html -w "→ %{http_code} en %{time_total}s\n" | tr -d '\r' | grep -viE "^(set-cookie|x-nf-|server-timing)" || true
+            head -c 1500 connexion.html | sed 's/<[^>]*>/ /g' | tr -s ' \n' | head -c 800; echo
+            echo '```'
+          } | tee rapport.md
+          node -e "const s=require('./sante.json'); if(!s.ok){console.error('Service non sain');process.exit(1)}"
+      - name: Parcours de bout en bout (distant)
+        env:
+          E2E_BASE_URL: ${{ steps.url.outputs.url }}
+          E2E_REMOTE: "1"
+        run: |
+          set -o pipefail
+          { echo; echo "## Parcours de bout en bout"; echo '```'; } >> rapport.md
+          npm run test:e2e 2>&1 | sed 's/\x1b\[[0-9;]*m//g' | tee -a rapport.md
+          echo '```' >> rapport.md
+      - name: Publier le rapport
+        if: always()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/publish-report.mjs rapport.md "Rapport de vérification du déploiement" "${{ job.status == 'success' && 'success' || 'failure' }}"

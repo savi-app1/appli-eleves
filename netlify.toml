@@ -1,0 +1,14 @@
+# Déploiement SAVI sur Netlify (environnement de validation « netlify-preview », voir docs/07-deploiement.md § 8).
+# Aucun secret ici : ce fichier est public. Les clés (IA, paiement réel) se renseignent dans l'interface Netlify.
+[build]
+  command = "npm run ocr:setup && npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "22"
+  NPM_FLAGS = "--no-audit --no-fund"
+  NEXT_TELEMETRY_DISABLED = "1"
+  SAVI_DEPLOY_PRESET = "netlify-preview"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
