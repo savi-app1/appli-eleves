@@ -6,7 +6,6 @@ import { Lightbulb, Paperclip, Pin, PinOff, Plus, RefreshCw, Send, Sparkles, Wan
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { mockTutorReply, type Intent } from "@/lib/mock-tutor";
-import { mockUser } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 
 interface Msg {
@@ -31,7 +30,7 @@ function RichText({ text }: { text: string }) {
   );
 }
 
-export function TutorChat() {
+export function TutorChat({ user }: { user: { firstName: string; level: string } }) {
   const t = useTranslations("tutor");
   const tl = useTranslations("languagesNames");
   const labels = {
@@ -39,8 +38,8 @@ export function TutorChat() {
     newChat: t("newChat"),
     placeholder: t("placeholder"),
     send: t("send"),
-    welcome: t("welcome", { name: mockUser.firstName }),
-    levelChip: t("levelChip", { level: mockUser.level }),
+    welcome: t("welcome", { name: user.firstName }),
+    levelChip: t("levelChip", { level: user.level }),
     answerLangChip: t("answerLangChip", { language: tl("fr").toLowerCase() }),
     suggestions: [0, 1, 2, 3].map((i) => t(`suggestions.${i}`)),
     thinking: t("thinking"),

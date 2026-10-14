@@ -7,6 +7,7 @@ import { Card, CardTitle } from "@/components/ui/card";
 import { ProgressBar } from "@/components/ui/progress";
 import { TrialBanner } from "@/components/shell/trial-banner";
 import { mockConversations, mockProgress, mockSubjects, mockUser } from "@/lib/mock-data";
+import { requireUser } from "@/server/auth/current";
 import { cn } from "@/lib/utils";
 
 const tiles = [
@@ -17,16 +18,17 @@ const tiles = [
 ] as const;
 
 export default async function HomePage() {
+  const { user, entitlement } = await requireUser();
   const t = await getTranslations("home");
   const tc = await getTranslations("common");
   const session = mockProgress.revisionSessions[0];
 
   return (
     <div className="space-y-5">
-      <TrialBanner />
+      <TrialBanner entitlement={entitlement} />
 
       <section>
-        <h1 className="text-2xl font-extrabold text-ink">{t("greeting", { name: mockUser.firstName })}</h1>
+        <h1 className="text-2xl font-extrabold text-ink">{t("greeting", { name: user.firstName })}</h1>
         <p className="mt-0.5 text-[15px] text-muted">{t("prompt")}</p>
       </section>
 

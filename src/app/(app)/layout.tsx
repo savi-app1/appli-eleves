@@ -2,8 +2,10 @@ import { getTranslations } from "next-intl/server";
 import { BottomNav } from "@/components/shell/bottom-nav";
 import { PreviewBanner } from "@/components/shell/preview-banner";
 import { TopBar } from "@/components/shell/top-bar";
+import { requireUser } from "@/server/auth/current";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
+  await requireUser();
   const t = await getTranslations("nav");
   const ta = await getTranslations("app");
   return (

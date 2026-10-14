@@ -31,6 +31,8 @@ const nextConfig: NextConfig = {
   // Application authentifiée : rendu dynamique classique (pas de Cache Components)
   // pour garder un modèle simple et prévisible côté sécurité.
   cacheComponents: false,
+  // Paquets natifs / WASM à ne pas regrouper dans le bundle serveur.
+  serverExternalPackages: ["@electric-sql/pglite", "pg"],
   turbopack: {
     rules: {
       "*.css": {

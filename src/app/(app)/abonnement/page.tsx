@@ -4,15 +4,19 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardTitle } from "@/components/ui/card";
 import { PageHeader } from "@/components/ui/page";
-import { MOCK_NOW, mockPricing, mockSubscription } from "@/lib/mock-data";
-import { daysBetween, formatXof } from "@/lib/utils";
+import { PRICING } from "@/server/billing/entitlement";
+import { requireUser } from "@/server/auth/current";
+import { formatXof } from "@/lib/utils";
 
 export default async function SubscriptionPage() {
+  const { entitlement } = await requireUser();
   const t = await getTranslations("subscription");
   const tc = await getTranslations("common");
   const format = await getFormatter();
-  const days = Math.max(0, daysBetween(MOCK_NOW, mockSubscription.trialEndsAt));
-  const endDate = format.dateTime(mockSubscription.trialEndsAt, { weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" });
+  const days = entitlement.daysLeft;
+  const endDate = format.dateTime(entitlement.premiumUntil ?? entitlement.trialEndsAt, { weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" });
+  const mockPricing = PRICING;
+  const mockSubscription = { status: entitlement.status };
   const features = [0, 1, 2, 3, 4, 5].map((i) => t(`features.${i}`));
 
   return (

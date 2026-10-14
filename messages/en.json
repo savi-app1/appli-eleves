@@ -54,10 +54,22 @@
   "onboarding": {
     "skip": "Skip",
     "slides": [
-      { "title": "Ask your questions, any time", "body": "A tutor that explains step by step, adapted to your class and level. If you don't understand, it explains differently." },
-      { "title": "Get your homework corrected", "body": "Take a photo of your exercise: SAVI reads it, spots the mistakes and explains the correction." },
-      { "title": "Revise with your own courses", "body": "Import your PDFs and course photos. Summaries, quizzes, exercises and answers based only on your documents." },
-      { "title": "Prepare your exams", "body": "Timed mock exams, detailed corrections and subject-by-subject progress tracking." }
+      {
+        "title": "Ask your questions, any time",
+        "body": "A tutor that explains step by step, adapted to your class and level. If you don't understand, it explains differently."
+      },
+      {
+        "title": "Get your homework corrected",
+        "body": "Take a photo of your exercise: SAVI reads it, spots the mistakes and explains the correction."
+      },
+      {
+        "title": "Revise with your own courses",
+        "body": "Import your PDFs and course photos. Summaries, quizzes, exercises and answers based only on your documents."
+      },
+      {
+        "title": "Prepare your exams",
+        "body": "Timed mock exams, detailed corrections and subject-by-subject progress tracking."
+      }
     ],
     "cta": "Create my account",
     "haveAccount": "I already have an account",
@@ -96,19 +108,38 @@
       "tle": "Grade 12 (Terminale)",
       "superieur": "Higher education",
       "concours": "Competitive exam candidate"
-    }
+    },
+    "forgotHelp": "Password reset by email/SMS will be enabled once the sending service is configured. Meanwhile, contact the SAVI team."
   },
   "home": {
     "greeting": "Hello {name} 👋",
     "greetingAnonymous": "Hello 👋",
     "prompt": "What do you want to learn today?",
     "tiles": {
-      "ask": { "title": "Ask a question", "subtitle": "Get a clear explanation" },
-      "grade": { "title": "Correct homework", "subtitle": "Send a photo, get the correction" },
-      "quiz": { "title": "Quiz & exercises", "subtitle": "Practise and see your score" },
-      "courses": { "title": "My courses", "subtitle": "Your PDFs, photos and summaries" },
-      "exams": { "title": "Exams", "subtitle": "Timed mock exams" },
-      "progress": { "title": "My progress", "subtitle": "Strengths, difficulties, goals" }
+      "ask": {
+        "title": "Ask a question",
+        "subtitle": "Get a clear explanation"
+      },
+      "grade": {
+        "title": "Correct homework",
+        "subtitle": "Send a photo, get the correction"
+      },
+      "quiz": {
+        "title": "Quiz & exercises",
+        "subtitle": "Practise and see your score"
+      },
+      "courses": {
+        "title": "My courses",
+        "subtitle": "Your PDFs, photos and summaries"
+      },
+      "exams": {
+        "title": "Exams",
+        "subtitle": "Timed mock exams"
+      },
+      "progress": {
+        "title": "My progress",
+        "subtitle": "Strengths, difficulties, goals"
+      }
     },
     "todayRevision": "Today's revision",
     "todayRevisionEmpty": "Add a course to receive a personalised revision.",
@@ -156,7 +187,11 @@
   "grading": {
     "title": "Correct homework",
     "subtitle": "Photo or document, SAVI analyses and explains",
-    "steps": { "upload": "Document", "verify": "Recognised text", "result": "Correction" },
+    "steps": {
+      "upload": "Document",
+      "verify": "Recognised text",
+      "result": "Correction"
+    },
     "takePhoto": "Take a photo",
     "chooseFile": "Choose a file",
     "acceptedFormats": "JPG, PNG or PDF — 10 MB max",
@@ -191,12 +226,21 @@
     "chapters": "{count, plural, =1 {# chapter} other {# chapters}}",
     "documents": "{count, plural, =1 {# document} other {# documents}}",
     "pages": "{count, plural, =1 {# page} other {# pages}}",
-    "actions": { "summary": "Summary", "quiz": "Quiz", "exercises": "Exercises", "ask": "Ask a question" },
+    "actions": {
+      "summary": "Summary",
+      "quiz": "Quiz",
+      "exercises": "Exercises",
+      "ask": "Ask a question"
+    },
     "strictMode": "Strict mode",
     "strictModeHint": "Answers only from the selected documents and flags what is missing.",
     "strictOn": "Strict mode on: answers limited to {count, plural, =1 {# document} other {# documents}}.",
     "missingInfo": "Information missing from your documents",
-    "status": { "ready": "Ready", "processing": "Analysing…", "failed": "Could not read" },
+    "status": {
+      "ready": "Ready",
+      "processing": "Analysing…",
+      "failed": "Could not read"
+    },
     "empty": "No document yet. Import your first course.",
     "selectForStrict": "Select for strict mode",
     "sources": "Sources used"
@@ -207,7 +251,11 @@
     "start": "Start a quiz",
     "fromCourse": "From my courses",
     "bySubject": "By subject",
-    "types": { "mcq": "Multiple choice", "truefalse": "True or false", "short": "Short answer" },
+    "types": {
+      "mcq": "Multiple choice",
+      "truefalse": "True or false",
+      "short": "Short answer"
+    },
     "question": "Question {current} / {total}",
     "validate": "Check",
     "nextQuestion": "Next question",
@@ -266,14 +314,24 @@
     "revisionPlan": "Suggested revision sessions",
     "generatePlan": "Generate a personalised session",
     "weekActivity": "Last 7 days",
-    "stats": { "questions": "Questions asked", "quizzes": "Quizzes done", "gradings": "Homework corrected", "docs": "Documents" },
+    "stats": {
+      "questions": "Questions asked",
+      "quizzes": "Quizzes done",
+      "gradings": "Homework corrected",
+      "docs": "Documents"
+    },
     "basedOn": "Computed from your quizzes, corrections and mock exams."
   },
   "profile": {
     "title": "My profile",
     "edit": "Edit",
     "memberSince": "Member since {date}",
-    "sections": { "account": "Account", "preferences": "Preferences", "data": "Data & privacy", "about": "About" },
+    "sections": {
+      "account": "Account",
+      "preferences": "Preferences",
+      "data": "Data & privacy",
+      "about": "About"
+    },
     "items": {
       "subscription": "Subscription",
       "history": "Conversation history",
@@ -290,7 +348,10 @@
     "deleteWarning": "Deletion permanently erases your account, documents and conversations.",
     "pinned": "Pinned",
     "recent": "Recent",
-    "noHistory": "No conversation yet."
+    "noHistory": "No conversation yet.",
+    "deleteTypeToConfirm": "To confirm, type SUPPRIMER below.",
+    "cancel": "Cancel",
+    "deletedNotice": "Your account and all your data have been deleted. Thanks for trying SAVI."
   },
   "settings": {
     "title": "Languages & theme",
@@ -303,7 +364,11 @@
     "auto": "Automatic detection",
     "alsoFrench": "Also add a French version",
     "theme": "Theme",
-    "themes": { "light": "Light", "dark": "Dark", "system": "Automatic" },
+    "themes": {
+      "light": "Light",
+      "dark": "Dark",
+      "system": "Automatic"
+    },
     "status": {
       "stable": "Full support",
       "beta": "Beta — partial translation, being validated by native speakers",
@@ -350,5 +415,23 @@
     "body": "Your free trial has ended. Subscribe to keep using this feature.",
     "cta": "See plans"
   },
-  "languagesNames": { "fr": "French", "en": "English", "mos": "Mooré", "dyu": "Dioula", "ff": "Fulfulde", "es": "Spanish" }
+  "languagesNames": {
+    "fr": "French",
+    "en": "English",
+    "mos": "Mooré",
+    "dyu": "Dioula",
+    "ff": "Fulfulde",
+    "es": "Spanish"
+  },
+  "authErrors": {
+    "invalid_identifier": "Check your email or phone number.",
+    "password_too_short": "Password must be at least 8 characters.",
+    "password_too_long": "Password is too long (128 characters max).",
+    "identifier_taken": "An account already exists with this email or number. Sign in.",
+    "invalid_credentials": "Incorrect identifier or password.",
+    "first_name_required": "Please enter your first name.",
+    "consent_required": "You must accept the terms of use to continue.",
+    "rate_limited": "Too many attempts. Try again in a few minutes.",
+    "unknown": "Something went wrong. Please try again."
+  }
 }

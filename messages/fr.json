@@ -108,19 +108,38 @@
       "tle": "Terminale",
       "superieur": "Enseignement supérieur",
       "concours": "Candidat à un concours"
-    }
+    },
+    "forgotHelp": "La réinitialisation du mot de passe par e-mail/SMS sera activée quand le service d'envoi sera configuré. En attendant, contacte l'équipe SAVI."
   },
   "home": {
     "greeting": "Bonjour {name} 👋",
     "greetingAnonymous": "Bonjour 👋",
     "prompt": "Que veux-tu apprendre aujourd'hui ?",
     "tiles": {
-      "ask": { "title": "Pose une question", "subtitle": "Obtiens une explication claire" },
-      "grade": { "title": "Corriger un devoir", "subtitle": "Envoie une photo, reçois la correction" },
-      "quiz": { "title": "Quiz & exercices", "subtitle": "Entraîne-toi et vois ton score" },
-      "courses": { "title": "Mes cours", "subtitle": "Tes PDF, photos et résumés" },
-      "exams": { "title": "Examens & concours", "subtitle": "Examens blancs chronométrés" },
-      "progress": { "title": "Ma progression", "subtitle": "Forces, difficultés, objectifs" }
+      "ask": {
+        "title": "Pose une question",
+        "subtitle": "Obtiens une explication claire"
+      },
+      "grade": {
+        "title": "Corriger un devoir",
+        "subtitle": "Envoie une photo, reçois la correction"
+      },
+      "quiz": {
+        "title": "Quiz & exercices",
+        "subtitle": "Entraîne-toi et vois ton score"
+      },
+      "courses": {
+        "title": "Mes cours",
+        "subtitle": "Tes PDF, photos et résumés"
+      },
+      "exams": {
+        "title": "Examens & concours",
+        "subtitle": "Examens blancs chronométrés"
+      },
+      "progress": {
+        "title": "Ma progression",
+        "subtitle": "Forces, difficultés, objectifs"
+      }
     },
     "todayRevision": "Révision du jour",
     "todayRevisionEmpty": "Ajoute un cours pour recevoir une révision personnalisée.",
@@ -168,7 +187,11 @@
   "grading": {
     "title": "Corriger un devoir",
     "subtitle": "Photo ou document, SAVI analyse et explique",
-    "steps": { "upload": "Document", "verify": "Texte reconnu", "result": "Correction" },
+    "steps": {
+      "upload": "Document",
+      "verify": "Texte reconnu",
+      "result": "Correction"
+    },
     "takePhoto": "Prendre une photo",
     "chooseFile": "Choisir un fichier",
     "acceptedFormats": "JPG, PNG ou PDF — 10 Mo maximum",
@@ -213,7 +236,11 @@
     "strictModeHint": "Répond uniquement à partir des documents sélectionnés et signale ce qui n'y figure pas.",
     "strictOn": "Mode strict activé : réponses limitées à {count, plural, =1 {# document} other {# documents}}.",
     "missingInfo": "Information absente de tes documents",
-    "status": { "ready": "Prêt", "processing": "Analyse en cours…", "failed": "Lecture impossible" },
+    "status": {
+      "ready": "Prêt",
+      "processing": "Analyse en cours…",
+      "failed": "Lecture impossible"
+    },
     "empty": "Aucun document pour l'instant. Importe ton premier cours.",
     "selectForStrict": "Sélectionner pour le mode strict",
     "sources": "Sources utilisées"
@@ -224,7 +251,11 @@
     "start": "Lancer un quiz",
     "fromCourse": "À partir de mes cours",
     "bySubject": "Par matière",
-    "types": { "mcq": "QCM", "truefalse": "Vrai ou faux", "short": "Réponse courte" },
+    "types": {
+      "mcq": "QCM",
+      "truefalse": "Vrai ou faux",
+      "short": "Réponse courte"
+    },
     "question": "Question {current} / {total}",
     "validate": "Valider",
     "nextQuestion": "Question suivante",
@@ -283,7 +314,12 @@
     "revisionPlan": "Séances de révision proposées",
     "generatePlan": "Générer une séance personnalisée",
     "weekActivity": "Activité des 7 derniers jours",
-    "stats": { "questions": "Questions posées", "quizzes": "Quiz terminés", "gradings": "Devoirs corrigés", "docs": "Documents" },
+    "stats": {
+      "questions": "Questions posées",
+      "quizzes": "Quiz terminés",
+      "gradings": "Devoirs corrigés",
+      "docs": "Documents"
+    },
     "basedOn": "Calculé à partir de tes quiz, corrections et examens blancs."
   },
   "profile": {
@@ -312,7 +348,10 @@
     "deleteWarning": "La suppression efface définitivement ton compte, tes documents et tes discussions.",
     "pinned": "Épinglées",
     "recent": "Récentes",
-    "noHistory": "Aucune discussion pour l'instant."
+    "noHistory": "Aucune discussion pour l'instant.",
+    "deleteTypeToConfirm": "Pour confirmer, écris SUPPRIMER ci-dessous.",
+    "cancel": "Annuler",
+    "deletedNotice": "Ton compte et toutes tes données ont été supprimés. Merci d'avoir essayé SAVI."
   },
   "settings": {
     "title": "Langues et thème",
@@ -325,7 +364,11 @@
     "auto": "Détection automatique",
     "alsoFrench": "Ajouter une version en français",
     "theme": "Thème",
-    "themes": { "light": "Clair", "dark": "Sombre", "system": "Automatique" },
+    "themes": {
+      "light": "Clair",
+      "dark": "Sombre",
+      "system": "Automatique"
+    },
     "status": {
       "stable": "Prise en charge complète",
       "beta": "Bêta — traduction partielle, en cours de validation par des locuteurs",
@@ -379,5 +422,16 @@
     "dyu": "Dioula",
     "ff": "Fulfuldé",
     "es": "Espagnol"
+  },
+  "authErrors": {
+    "invalid_identifier": "Vérifie ton e-mail ou ton numéro de téléphone.",
+    "password_too_short": "Le mot de passe doit contenir au moins 8 caractères.",
+    "password_too_long": "Le mot de passe est trop long (128 caractères maximum).",
+    "identifier_taken": "Un compte existe déjà avec cet e-mail ou ce numéro. Connecte-toi.",
+    "invalid_credentials": "Identifiant ou mot de passe incorrect.",
+    "first_name_required": "Indique ton prénom.",
+    "consent_required": "Tu dois accepter les conditions d'utilisation pour continuer.",
+    "rate_limited": "Trop de tentatives. Réessaie dans quelques minutes.",
+    "unknown": "Une erreur est survenue. Réessaie dans un instant."
   }
 }
