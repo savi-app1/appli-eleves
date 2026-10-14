@@ -36,7 +36,29 @@
     "verifiedOn": "Verified on {date}",
     "example": "Example",
     "toConfirm": "To be confirmed",
-    "or": "or"
+    "or": "or",
+    "errors": {
+      "premium_required": "Your free trial has ended. Activate a subscription to continue.",
+      "quota_exceeded": "You reached today's limit for this feature. Come back tomorrow or try another activity.",
+      "rate_limited": "Too many requests at once. Wait a few seconds and try again.",
+      "ai_unavailable": "The assistant is temporarily unavailable. Try again shortly.",
+      "not_found": "Item not found.",
+      "invalid": "Invalid request: check what you entered.",
+      "unknown": "Something went wrong. Please try again.",
+      "too_large": "File too large (10 MB max).",
+      "type_not_allowed": "Format not accepted: PDF, JPG, PNG or WebP only.",
+      "content_mismatch": "The file content does not match its format.",
+      "empty": "The file is empty."
+    },
+    "demoMode": "Demo mode: simulated AI",
+    "generating": "Generating…",
+    "confirmDelete": "Delete permanently?",
+    "optional": "optional",
+    "subscribe": "See subscription",
+    "sending": "Sending…",
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "untitled": "Untitled"
   },
   "nav": {
     "home": "Home",
@@ -147,7 +169,11 @@
     "recentChats": "Resume a conversation",
     "streak": "{count, plural, =1 {# day streak} other {# day streak}}",
     "weeklyGoal": "This week's goal",
-    "weeklyGoalProgress": "{done} / {total} sessions"
+    "weeklyGoalProgress": "{done} / {total} sessions",
+    "revisionFallback": "Ask your first question or import a course to get a personalised revision.",
+    "noChats": "No conversation yet. Ask your first question!",
+    "demoBanner": "Demo mode: AI answers are simulated until an API key is connected (server-side, step 7).",
+    "noProgress": "Take a first quiz to see your progress here."
   },
   "trial": {
     "active": "Free trial: {days} left. Ends on {date}.",
@@ -181,8 +207,22 @@
     },
     "thinking": "SAVI is thinking…",
     "disclaimer": "SAVI can make mistakes. Check important points with your lesson or your teacher.",
-    "exampleNotice": "Example answer: the real AI will be connected in the next step.",
-    "attach": "Attach a photo"
+    "exampleNotice": "",
+    "attach": "Attach a photo",
+    "demoChip": "Demo mode: simulated AI",
+    "demoHint": "Answers come from a simulated AI (no API key). The real AI is connected server-side at step 7.",
+    "strictChip": "Strict mode · {count, plural, =1 {# document} other {# documents}}",
+    "strictOff": "Leave strict mode",
+    "strictChoose": "Choose my documents",
+    "strictInfo": "Answers limited to your selected documents: anything missing is flagged.",
+    "sources": "Sources",
+    "page": "p. {page}",
+    "history": "History",
+    "pinnedNotice": "Pinned conversation",
+    "continueHint": "You can continue this conversation or start a new one.",
+    "stop": "Stop",
+    "retry": "Retry",
+    "errorTitle": "The tutor could not answer"
   },
   "grading": {
     "title": "Correct homework",
@@ -213,7 +253,26 @@
     "noGrade": "No marking scheme provided: SAVI gives no mark, only an explained correction.",
     "askTutor": "Ask a question about this correction",
     "newGrading": "Correct another homework",
-    "history": "Previous corrections"
+    "history": "Previous corrections",
+    "typeInstead": "Or type the exercise and your answer",
+    "typedPlaceholder": "E.g. Solve 3x − 7 = 2x + 5. My answer: x = −2",
+    "outOfLabel": "Out of",
+    "pending": "Analysing…",
+    "historyEmpty": "No correction yet.",
+    "status": {
+      "recognized": "To check",
+      "graded": "Corrected",
+      "failed": "Could not read",
+      "pending": "In progress"
+    },
+    "demoNotice": "Demo mode: correction produced by a simulated AI.",
+    "summary": "In short",
+    "photo": "Submitted document",
+    "lowConfidence": "Uncertain reading: check the text carefully before confirming.",
+    "recognizedEmpty": "I could not read any text. You can type it yourself below.",
+    "delete": "Delete this correction",
+    "exampleNotice": "",
+    "textOrFile": "Send a photo/PDF or type the text: at least one of the two."
   },
   "courses": {
     "title": "My courses",
@@ -243,7 +302,39 @@
     },
     "empty": "No document yet. Import your first course.",
     "selectForStrict": "Select for strict mode",
-    "sources": "Sources used"
+    "sources": "Sources used",
+    "importFile": "File (PDF, JPG, PNG or WebP — 10 MB max)",
+    "titleLabel": "Title",
+    "chapterLabel": "Chapter",
+    "subjectLabel": "Subject",
+    "noSubject": "No subject",
+    "importSubmit": "Import and read the document",
+    "importing": "Importing and reading… (a few seconds, longer for long PDFs)",
+    "importPrivacy": "The document stays private: only you can see and use it.",
+    "inContent": "Inside my documents",
+    "noResults": "No matching document.",
+    "added": "Added on {date}",
+    "strictAsk": "Ask about these documents",
+    "strictNeedSelection": "Select at least one ready document.",
+    "detail": {
+      "text": "Extracted text",
+      "summary": "Revision sheet",
+      "exercises": "Exercises",
+      "generate": "Generate with SAVI",
+      "regenerate": "Generate a new version",
+      "generatedOn": "Generated on {date}",
+      "noText": "No text could be read in this document (blurry photo or scanned PDF without text).",
+      "failure": "Could not read: {reason}",
+      "warning": "Warning: {reason}",
+      "quiz": "Create a quiz from this document",
+      "ask": "Ask a question (strict mode)",
+      "edit": "Edit classification",
+      "delete": "Delete this document",
+      "openFile": "Open original file",
+      "textHint": "Excerpt of the recognised text: used for search, strict mode, sheets and quizzes.",
+      "emptyOutput": "Nothing generated yet.",
+      "outputsHint": "Sheets and exercises are generated from this document's text only."
+    }
   },
   "quiz": {
     "title": "Quiz & exercises",
@@ -277,7 +368,32 @@
     "reviewErrors": "Review my mistakes",
     "history": "History",
     "lastAttempts": "Latest quizzes",
-    "duration": "Duration"
+    "duration": "Duration",
+    "newQuiz": "New quiz",
+    "subjectLabel": "Subject",
+    "topicLabel": "Topic or chapter",
+    "topicPlaceholder": "E.g. Pythagorean theorem",
+    "countLabel": "Number of questions",
+    "generate": "Generate quiz",
+    "generating": "Generating quiz…",
+    "myQuizzes": "My quizzes",
+    "noQuizzes": "Generate your first quiz on a topic or from one of your courses.",
+    "noAttempts": "No attempt yet.",
+    "attempts": "{count, plural, =0 {no attempt} =1 {# attempt} other {# attempts}}",
+    "play": "Play",
+    "best": "Best score: {score}/{total}",
+    "saving": "Saving score…",
+    "saved": "Score saved",
+    "saveError": "The score could not be saved ({reason}). Your result stays visible below.",
+    "fromDoc": "From: {title}",
+    "demoNotice": "Demo mode: questions produced by a simulated AI.",
+    "sources": {
+      "document": "From a course",
+      "subject": "By topic",
+      "revision": "Revision",
+      "exam": "Mock exam"
+    },
+    "previousAttempts": "Previous attempts"
   },
   "exams": {
     "title": "Exams",
@@ -299,7 +415,23 @@
     "reliabilityHint": "Each paper shows its source and verification date. Papers marked “example” are for testing the app.",
     "sampleNotice": "Sample paper created for the demo — not an official paper.",
     "pastResults": "My mock exams",
-    "year": "{year} session"
+    "year": "{year} session",
+    "mockAiTitle": "Mock exam generated by SAVI",
+    "mockAiHint": "Questions generated in the spirit of the chosen exam, timed, corrected at the end. Not an official paper.",
+    "duration": "Duration",
+    "questionsCount": "Questions",
+    "finished": "Exam finished",
+    "timeUp": "Time is up: your paper was handed in automatically.",
+    "answered": "{done} / {total} answered",
+    "previous": "Previous",
+    "next": "Next",
+    "reviewTitle": "Detailed correction",
+    "yourAnswer": "Your answer",
+    "noAnswer": "No answer",
+    "pastEmpty": "No mock exam yet.",
+    "official": "Official papers: added after sources are validated per country (provenance and verification date shown).",
+    "minutesLabel": "{count} min",
+    "quit": "Leave without handing in"
   },
   "progress": {
     "title": "My progress",
@@ -320,7 +452,22 @@
       "gradings": "Homework corrected",
       "docs": "Documents"
     },
-    "basedOn": "Computed from your quizzes, corrections and mock exams."
+    "basedOn": "Computed from your quizzes, corrections and mock exams.",
+    "noData": "Not enough data yet: finish a quiz to see your progress.",
+    "goalDate": "Due date",
+    "noGoals": "No goal yet.",
+    "markProgress": "Update",
+    "sessionWhy": {
+      "weak": "Topic to strengthen ({percent}%)",
+      "new": "To get started gently"
+    },
+    "topicStat": "{correct} / {total} correct",
+    "noStrengths": "Keep practising to reveal your strengths.",
+    "noDifficulties": "No difficulty spotted yet.",
+    "revisionHint": "Short sessions built from your results.",
+    "overallHint": "% of correct answers across your latest quizzes and mock exams.",
+    "streak": "{count, plural, =0 {No streak yet} =1 {# day in a row} other {# days in a row}}",
+    "goalProgress": "Progress (%)"
   },
   "profile": {
     "title": "My profile",
@@ -351,7 +498,11 @@
     "noHistory": "No conversation yet.",
     "deleteTypeToConfirm": "To confirm, type SUPPRIMER below.",
     "cancel": "Cancel",
-    "deletedNotice": "Your account and all your data have been deleted. Thanks for trying SAVI."
+    "deletedNotice": "Your account and all your data have been deleted. Thanks for trying SAVI.",
+    "pinnedEmpty": "Pin a conversation to find it here.",
+    "deleteConversation": "Delete conversation",
+    "messages": "{count, plural, =1 {# message} other {# messages}}",
+    "strictTag": "Strict mode"
   },
   "settings": {
     "title": "Languages & theme",

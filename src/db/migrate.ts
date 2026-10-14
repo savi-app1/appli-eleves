@@ -16,9 +16,10 @@ async function main() {
     console.log("Migrations appliquées sur PostgreSQL.");
   } else {
     const { PGlite } = await import("@electric-sql/pglite");
+    const { unaccent } = await import("@electric-sql/pglite/contrib/unaccent");
     const { drizzle } = await import("drizzle-orm/pglite");
     const { migrate } = await import("drizzle-orm/pglite/migrator");
-    const client = await PGlite.create({ dataDir: process.env.PGLITE_DATA_DIR ?? "./.data/pglite" });
+    const client = await PGlite.create({ dataDir: process.env.PGLITE_DATA_DIR ?? "./.data/pglite", extensions: { unaccent } });
     await migrate(drizzle(client, { schema }), { migrationsFolder: "./drizzle" });
     await client.close();
     console.log("Migrations appliquées sur PGlite (./.data/pglite).");

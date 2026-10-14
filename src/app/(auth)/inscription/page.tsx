@@ -2,7 +2,7 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { RegisterForm } from "@/components/screens/auth-forms";
 import { LogoMark } from "@/components/shell/logo";
-import { mockExamCatalogue } from "@/lib/mock-data";
+import { EXAM_COUNTRIES } from "@/lib/exam-catalogue";
 
 export default async function RegisterPage() {
   const t = await getTranslations("auth");
@@ -13,7 +13,7 @@ export default async function RegisterPage() {
         <h1 className="mt-3 text-2xl font-extrabold text-ink">{t("registerTitle")}</h1>
         <p className="mt-1 text-sm text-muted">{t("registerSubtitle")}</p>
       </div>
-      <RegisterForm countries={mockExamCatalogue.countries} />
+      <RegisterForm countries={EXAM_COUNTRIES} />
       <p className="mt-6 text-center text-sm text-muted">
         {t("alreadyAccount")}{" "}
         <Link href="/connexion" className="font-semibold text-green">{t("login")}</Link>

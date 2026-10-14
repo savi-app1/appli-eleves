@@ -43,7 +43,7 @@ export function LoginForm({ next }: { next?: string }) {
   );
 }
 
-export function RegisterForm({ countries }: { countries: { code: string; name: string }[] }) {
+export function RegisterForm({ countries }: { countries: readonly { code: string; name: string }[] }) {
   const t = useTranslations("auth");
   const [state, action, pending] = useActionState<AuthFormState, FormData>(registerAction, {});
   return (

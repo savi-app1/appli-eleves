@@ -56,7 +56,7 @@ function LocaleOption({ code, selected, onSelect, disabled }: { code: Locale; se
   );
 }
 
-export function SettingsScreen({ initial, countries }: { initial: SettingsInitial; countries: { code: string; name: string }[] }) {
+export function SettingsScreen({ initial, countries }: { initial: SettingsInitial; countries: readonly { code: string; name: string }[] }) {
   const t = useTranslations("settings");
   const ta = useTranslations("auth");
   const tc = useTranslations("common");

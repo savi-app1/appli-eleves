@@ -8,7 +8,7 @@ import { SectionLabel } from "@/components/ui/card";
 import { requireUser } from "@/server/auth/current";
 import { deleteAccountAction, logoutAction } from "@/server/auth/actions";
 import { initials } from "@/lib/utils";
-import { mockExamCatalogue } from "@/lib/mock-data";
+import { EXAM_COUNTRIES } from "@/lib/exam-catalogue";
 
 export default async function ProfilePage({ searchParams }: { searchParams: Promise<{ delete?: string }> }) {
   const { user, entitlement } = await requireUser();
@@ -20,7 +20,7 @@ export default async function ProfilePage({ searchParams }: { searchParams: Prom
   const tset = await getTranslations("settings");
   const format = await getFormatter();
   const chevron = <ChevronRight className="size-4 text-muted" />;
-  const countryName = mockExamCatalogue.countries.find((c) => c.code === user.country)?.name ?? user.country;
+  const countryName = EXAM_COUNTRIES.find((c) => c.code === user.country)?.name ?? user.country;
   const levelLabel = ta.has(`levels.${user.level}`) ? ta(`levels.${user.level}`) : user.level;
 
   const subscriptionSubtitle =

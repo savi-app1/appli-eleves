@@ -2,7 +2,7 @@ import { getTranslations } from "next-intl/server";
 import { PageHeader } from "@/components/ui/page";
 import { SettingsScreen } from "@/components/screens/settings";
 import { requireUser } from "@/server/auth/current";
-import { mockExamCatalogue } from "@/lib/mock-data";
+import { EXAM_COUNTRIES } from "@/lib/exam-catalogue";
 
 export default async function SettingsPage() {
   const { user } = await requireUser();
@@ -11,7 +11,7 @@ export default async function SettingsPage() {
     <>
       <PageHeader title={t("title")} back="/profil" />
       <SettingsScreen
-        countries={mockExamCatalogue.countries}
+        countries={EXAM_COUNTRIES}
         initial={{
           firstName: user.firstName,
           level: user.level,

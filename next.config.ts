@@ -32,7 +32,8 @@ const nextConfig: NextConfig = {
   // pour garder un modèle simple et prévisible côté sécurité.
   cacheComponents: false,
   // Paquets natifs / WASM à ne pas regrouper dans le bundle serveur.
-  serverExternalPackages: ["@electric-sql/pglite", "pg"],
+  // Paquets exécutés tels quels côté serveur (workers, WebAssembly, binaires) : ne pas les regrouper avec le bundler.
+  serverExternalPackages: ["@electric-sql/pglite", "pg", "tesseract.js", "unpdf"],
   turbopack: {
     rules: {
       "*.css": {

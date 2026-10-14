@@ -222,9 +222,24 @@ export const documentChunks = pgTable(
     page: integer("page"),
     content: text("content").notNull(),
     /** Index plein texte français, maintenu automatiquement par PostgreSQL. */
-    tsv: tsvector("tsv").generatedAlwaysAs((): ReturnType<typeof sql> => sql`to_tsvector('french', content)`),
+    tsv: tsvector("tsv").generatedAlwaysAs((): ReturnType<typeof sql> => sql`to_tsvector('french_unaccent', content)`),
   },
   (t) => [index("chunks_document_idx").on(t.documentId, t.idx), index("chunks_tsv_idx").using("gin", t.tsv)],
+);
+
+/** Contenus générés à partir d'un document (fiche de révision, exercices) — conservés pour relecture hors connexion coûteuse. */
+export const documentOutputs = pgTable(
+  "document_outputs",
+  {
+    id: id(),
+    userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+    documentId: uuid("document_id").notNull().references(() => documents.id, { onDelete: "cascade" }),
+    kind: text("kind", { enum: ["summary", "exercises"] }).notNull(),
+    content: text("content").notNull(),
+    model: text("model"),
+    createdAt: createdAt(),
+  },
+  (t) => [index("document_outputs_doc_idx").on(t.documentId, t.kind, t.createdAt)],
 );
 
 export const submissions = pgTable(
@@ -256,6 +271,10 @@ export const quizzes = pgTable(
     subject: text("subject"),
     source: text("source", { enum: ["document", "subject", "revision", "exam"] }).notNull().default("subject"),
     documentId: uuid("document_id").references(() => documents.id, { onDelete: "set null" }),
+    topic: text("topic"),
+    level: text("level"),
+    /** durée imposée (examen blanc) ; null = quiz libre */
+    minutes: integer("minutes"),
     questions: jsonb("questions").notNull(),
     createdAt: createdAt(),
   },

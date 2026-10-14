@@ -36,7 +36,29 @@
     "verifiedOn": "Vérifié le {date}",
     "example": "Exemple",
     "toConfirm": "À confirmer",
-    "or": "ou"
+    "or": "ou",
+    "errors": {
+      "premium_required": "Ton essai gratuit est terminé. Active un abonnement pour continuer.",
+      "quota_exceeded": "Tu as atteint la limite du jour pour cette fonction. Reviens demain ou essaie une autre activité.",
+      "rate_limited": "Trop de demandes d'un coup. Attends quelques secondes puis réessaie.",
+      "ai_unavailable": "L'assistant est momentanément indisponible. Réessaie dans un instant.",
+      "not_found": "Élément introuvable.",
+      "invalid": "Demande invalide : vérifie les informations saisies.",
+      "unknown": "Une erreur est survenue. Réessaie.",
+      "too_large": "Fichier trop volumineux (10 Mo maximum).",
+      "type_not_allowed": "Format non accepté : PDF, JPG, PNG ou WebP uniquement.",
+      "content_mismatch": "Le contenu du fichier ne correspond pas à son format.",
+      "empty": "Le fichier est vide."
+    },
+    "demoMode": "Mode démonstration : IA simulée",
+    "generating": "Génération en cours…",
+    "confirmDelete": "Supprimer définitivement ?",
+    "optional": "facultatif",
+    "subscribe": "Voir l'abonnement",
+    "sending": "Envoi…",
+    "today": "Aujourd'hui",
+    "yesterday": "Hier",
+    "untitled": "Sans titre"
   },
   "nav": {
     "home": "Accueil",
@@ -147,7 +169,11 @@
     "recentChats": "Reprendre une discussion",
     "streak": "{count, plural, =1 {# jour de suite} other {# jours de suite}}",
     "weeklyGoal": "Objectif de la semaine",
-    "weeklyGoalProgress": "{done} / {total} séances"
+    "weeklyGoalProgress": "{done} / {total} séances",
+    "revisionFallback": "Pose ta première question ou importe un cours pour recevoir une révision personnalisée.",
+    "noChats": "Aucune discussion pour l'instant. Pose ta première question !",
+    "demoBanner": "Mode démonstration : les réponses de l'IA sont simulées jusqu'au branchement d'une clé API (côté serveur, à l'étape 7).",
+    "noProgress": "Fais un premier quiz pour voir ta progression ici."
   },
   "trial": {
     "active": "Essai gratuit : il te reste {days}. Fin le {date}.",
@@ -181,8 +207,22 @@
     },
     "thinking": "SAVI réfléchit…",
     "disclaimer": "SAVI peut se tromper. Vérifie les points importants avec ton cours ou ton professeur.",
-    "exampleNotice": "Réponse d'exemple : l'IA réelle sera branchée à l'étape suivante.",
-    "attach": "Joindre une photo"
+    "exampleNotice": "",
+    "attach": "Joindre une photo",
+    "demoChip": "Mode démonstration : IA simulée",
+    "demoHint": "Les réponses sont produites par une IA simulée (sans clé API). Le branchement de l'IA réelle se fait à l'étape 7, côté serveur uniquement.",
+    "strictChip": "Mode strict · {count, plural, =1 {# document} other {# documents}}",
+    "strictOff": "Quitter le mode strict",
+    "strictChoose": "Choisir mes documents",
+    "strictInfo": "Réponses limitées à tes documents sélectionnés : ce qui n'y figure pas est signalé.",
+    "sources": "Sources",
+    "page": "p. {page}",
+    "history": "Historique",
+    "pinnedNotice": "Discussion épinglée",
+    "continueHint": "Tu peux continuer cette discussion ou en commencer une nouvelle.",
+    "stop": "Arrêter",
+    "retry": "Réessayer",
+    "errorTitle": "Le tuteur n'a pas pu répondre"
   },
   "grading": {
     "title": "Corriger un devoir",
@@ -213,7 +253,26 @@
     "noGrade": "Pas de barème fourni : SAVI n'attribue pas de note, seulement une correction expliquée.",
     "askTutor": "Poser une question sur cette correction",
     "newGrading": "Corriger un autre devoir",
-    "history": "Corrections précédentes"
+    "history": "Corrections précédentes",
+    "typeInstead": "Ou saisis l'énoncé et ta réponse",
+    "typedPlaceholder": "Ex. Résoudre 3x − 7 = 2x + 5. Ma réponse : x = −2",
+    "outOfLabel": "Note sur",
+    "pending": "Analyse en cours…",
+    "historyEmpty": "Aucune correction pour l'instant.",
+    "status": {
+      "recognized": "À vérifier",
+      "graded": "Corrigé",
+      "failed": "Lecture impossible",
+      "pending": "En cours"
+    },
+    "demoNotice": "Mode démonstration : correction produite par une IA simulée.",
+    "summary": "En résumé",
+    "photo": "Document envoyé",
+    "lowConfidence": "Lecture peu sûre : relis attentivement le texte avant de confirmer.",
+    "recognizedEmpty": "Je n'ai pas réussi à lire de texte. Tu peux le saisir toi-même ci-dessous.",
+    "delete": "Supprimer cette correction",
+    "exampleNotice": "",
+    "textOrFile": "Envoie une photo/un PDF ou saisis le texte : au moins l'un des deux."
   },
   "courses": {
     "title": "Mes cours",
@@ -243,7 +302,39 @@
     },
     "empty": "Aucun document pour l'instant. Importe ton premier cours.",
     "selectForStrict": "Sélectionner pour le mode strict",
-    "sources": "Sources utilisées"
+    "sources": "Sources utilisées",
+    "importFile": "Fichier (PDF, JPG, PNG ou WebP — 10 Mo max)",
+    "titleLabel": "Titre",
+    "chapterLabel": "Chapitre",
+    "subjectLabel": "Matière",
+    "noSubject": "Sans matière",
+    "importSubmit": "Importer et lire le document",
+    "importing": "Import et lecture du document… (quelques secondes, plus pour les longs PDF)",
+    "importPrivacy": "Le document reste privé : seul toi peux le voir et l'utiliser.",
+    "inContent": "Dans le contenu de mes documents",
+    "noResults": "Aucun document ne correspond.",
+    "added": "Ajouté le {date}",
+    "strictAsk": "Poser une question sur ces documents",
+    "strictNeedSelection": "Sélectionne au moins un document prêt.",
+    "detail": {
+      "text": "Texte lu",
+      "summary": "Fiche de révision",
+      "exercises": "Exercices",
+      "generate": "Générer avec SAVI",
+      "regenerate": "Générer une nouvelle version",
+      "generatedOn": "Généré le {date}",
+      "noText": "Aucun texte n'a pu être lu dans ce document (photo floue ou PDF scanné sans texte).",
+      "failure": "Lecture impossible : {reason}",
+      "warning": "Attention : {reason}",
+      "quiz": "Créer un quiz sur ce document",
+      "ask": "Poser une question (mode strict)",
+      "edit": "Modifier le classement",
+      "delete": "Supprimer ce document",
+      "openFile": "Ouvrir le fichier original",
+      "textHint": "Extrait du texte reconnu : il sert à la recherche, au mode strict, aux fiches et aux quiz.",
+      "emptyOutput": "Rien de généré pour l'instant.",
+      "outputsHint": "Les fiches et exercices sont générés à partir du texte de ce document uniquement."
+    }
   },
   "quiz": {
     "title": "Quiz & exercices",
@@ -277,7 +368,32 @@
     "reviewErrors": "Revoir mes erreurs",
     "history": "Historique",
     "lastAttempts": "Derniers quiz",
-    "duration": "Durée"
+    "duration": "Durée",
+    "newQuiz": "Nouveau quiz",
+    "subjectLabel": "Matière",
+    "topicLabel": "Thème ou chapitre",
+    "topicPlaceholder": "Ex. Théorème de Pythagore",
+    "countLabel": "Nombre de questions",
+    "generate": "Générer le quiz",
+    "generating": "Génération du quiz…",
+    "myQuizzes": "Mes quiz",
+    "noQuizzes": "Génère ton premier quiz sur un thème ou depuis un de tes cours.",
+    "noAttempts": "Aucune tentative pour l'instant.",
+    "attempts": "{count, plural, =0 {aucune tentative} =1 {# tentative} other {# tentatives}}",
+    "play": "Jouer",
+    "best": "Meilleur score : {score}/{total}",
+    "saving": "Enregistrement du score…",
+    "saved": "Score enregistré",
+    "saveError": "Le score n'a pas pu être enregistré ({reason}). Ton résultat reste affiché ci-dessous.",
+    "fromDoc": "Depuis : {title}",
+    "demoNotice": "Mode démonstration : questions produites par une IA simulée.",
+    "sources": {
+      "document": "Depuis un cours",
+      "subject": "Par thème",
+      "revision": "Révision",
+      "exam": "Examen blanc"
+    },
+    "previousAttempts": "Tentatives précédentes"
   },
   "exams": {
     "title": "Examens & concours",
@@ -299,7 +415,23 @@
     "reliabilityHint": "Chaque sujet indique sa provenance et sa date de vérification. Les sujets marqués « exemple » servent à tester l'application.",
     "sampleNotice": "Sujet d'exemple créé pour la démonstration — pas un sujet officiel.",
     "pastResults": "Mes examens blancs",
-    "year": "Session {year}"
+    "year": "Session {year}",
+    "mockAiTitle": "Examen blanc généré par SAVI",
+    "mockAiHint": "Questions générées dans l'esprit de l'examen choisi, chronométrées, corrigées à la fin. Ce n'est pas un sujet officiel.",
+    "duration": "Durée",
+    "questionsCount": "Questions",
+    "finished": "Examen terminé",
+    "timeUp": "Temps écoulé : ta copie a été rendue automatiquement.",
+    "answered": "{done} / {total} répondues",
+    "previous": "Précédente",
+    "next": "Suivante",
+    "reviewTitle": "Correction détaillée",
+    "yourAnswer": "Ta réponse",
+    "noAnswer": "Pas de réponse",
+    "pastEmpty": "Aucun examen blanc pour l'instant.",
+    "official": "Sujets officiels : ajoutés après validation des sources par pays (provenance et date de vérification affichées).",
+    "minutesLabel": "{count} min",
+    "quit": "Quitter sans rendre"
   },
   "progress": {
     "title": "Ma progression",
@@ -320,7 +452,22 @@
       "gradings": "Devoirs corrigés",
       "docs": "Documents"
     },
-    "basedOn": "Calculé à partir de tes quiz, corrections et examens blancs."
+    "basedOn": "Calculé à partir de tes quiz, corrections et examens blancs.",
+    "noData": "Pas encore assez de données : termine un quiz pour voir ta progression.",
+    "goalDate": "Échéance",
+    "noGoals": "Aucun objectif pour l'instant.",
+    "markProgress": "Mettre à jour",
+    "sessionWhy": {
+      "weak": "Thème à renforcer ({percent} %)",
+      "new": "Pour démarrer en douceur"
+    },
+    "topicStat": "{correct} / {total} bonnes réponses",
+    "noStrengths": "Continue à t'entraîner pour repérer tes points forts.",
+    "noDifficulties": "Aucune difficulté repérée pour l'instant.",
+    "revisionHint": "Séances courtes construites à partir de tes résultats.",
+    "overallHint": "% de bonnes réponses sur tes derniers quiz et examens blancs.",
+    "streak": "{count, plural, =0 {Pas encore de série} =1 {# jour de suite} other {# jours de suite}}",
+    "goalProgress": "Avancement (%)"
   },
   "profile": {
     "title": "Mon profil",
@@ -351,7 +498,11 @@
     "noHistory": "Aucune discussion pour l'instant.",
     "deleteTypeToConfirm": "Pour confirmer, écris SUPPRIMER ci-dessous.",
     "cancel": "Annuler",
-    "deletedNotice": "Ton compte et toutes tes données ont été supprimés. Merci d'avoir essayé SAVI."
+    "deletedNotice": "Ton compte et toutes tes données ont été supprimés. Merci d'avoir essayé SAVI.",
+    "pinnedEmpty": "Épingle une discussion pour la retrouver ici.",
+    "deleteConversation": "Supprimer la discussion",
+    "messages": "{count, plural, =1 {# message} other {# messages}}",
+    "strictTag": "Mode strict"
   },
   "settings": {
     "title": "Langues et thème",

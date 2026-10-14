@@ -13,10 +13,15 @@
     "test:watch": "vitest",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "tsx src/db/migrate.ts",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "ocr:setup": "node scripts/fetch-tessdata.mjs"
   },
   "dependencies": {
+    "@ai-sdk/anthropic": "^4.0.79",
+    "@ai-sdk/openai": "^4.0.93",
+    "@ai-sdk/react": "^4.0.143",
     "@electric-sql/pglite": "^0.5.10",
+    "ai": "^7.0.140",
     "clsx": "^2.1.1",
     "drizzle-orm": "^0.45.4",
     "lucide-react": "^1.57.0",
@@ -26,6 +31,8 @@
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "server-only": "^0.0.1",
+    "tesseract.js": "^7.0.0",
+    "unpdf": "^1.8.1",
     "zod": "^4.6.7"
   },
   "devDependencies": {
