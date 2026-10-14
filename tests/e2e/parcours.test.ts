@@ -50,7 +50,8 @@ describe("compte et sécurité de base", () => {
     const nonceMatch = /'nonce-([^']+)'/.exec(res.headers.get("content-security-policy") ?? "");
     expect(nonceMatch, "nonce absent de la CSP").not.toBeNull();
     // listées en clair pour le rapport si une balise échappe au nonce
-    expect(scripts.filter((s) => !s.includes(`nonce="${nonceMatch![1]}"`)).map((s) => s.slice(0, 200))).toEqual([]);
+    // (les scripts injectés par la plateforme d'hébergement, ex. /.netlify/scripts/…, sont hors de notre contrôle : bloqués par la CSP, sans effet sur l'application)
+    expect(scripts.filter((s) => !s.includes(`nonce="${nonceMatch![1]}"`) && !s.includes('src="/.netlify/')).map((s) => s.slice(0, 200))).toEqual([]);
     expect((await anon.get("/sw.js")).status).toBe(200);
     expect((await anon.get("/hors-ligne")).status).toBe(200);
   });

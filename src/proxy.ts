@@ -48,6 +48,9 @@ export function proxy(request: NextRequest) {
 
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set("x-nonce", nonce);
+  // Next.js lit le nonce dans l'en-tête CSP de la *requête* pour l'appliquer à ses balises <script> : indispensable quand
+  // le proxy s'exécute à part du serveur (fonction edge chez l'hébergeur) et pas dans le même processus.
+  requestHeaders.set("content-security-policy", csp);
   const response = NextResponse.next({ request: { headers: requestHeaders } });
   response.headers.set(isDev ? "Content-Security-Policy-Report-Only" : "Content-Security-Policy", csp);
   // Les environnements autres que la production ne doivent pas être indexés.
